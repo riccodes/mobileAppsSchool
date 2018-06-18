@@ -1,46 +1,48 @@
-package com.school.codes.ric.mobileappsproject;
+package com.school.codes.ric.mobileappsproject.data;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-
-import com.school.codes.ric.mobileappsproject.data.TermDAO;
+import com.school.codes.ric.mobileappsproject.BuildConfig;
 import com.school.codes.ric.mobileappsproject.resource.TermRO;
 import com.school.codes.ric.mobileappsproject.util.DateUtils;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.List;
 
+import static android.os.Build.VERSION_CODES.LOLLIPOP;
 import static com.school.codes.ric.mobileappsproject.util.Constants.TERM_TABLE_NAME;
 import static org.junit.Assert.assertEquals;
 
-/**
- * Instrumented test, which will execute on an Android device.
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
- */
-
-public class DBTest {
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(constants = BuildConfig.class, sdk = LOLLIPOP, packageName = "com.school.codes.ric.mobileappsproject")
+public class TermDAOTest {
 
     private TermDAO termDAO;
-    private Context context;
     private String title;
     private Timestamp start;
     private Timestamp end;
 
     @Before
     public void before() throws ParseException {
-        context = InstrumentationRegistry.getTargetContext();
-        termDAO = new TermDAO(context);
+        termDAO = new TermDAO(RuntimeEnvironment.application);
         termDAO.clearDB(TERM_TABLE_NAME);
         title = "test term";
         start = DateUtils.convertStringToTimestamp("01-jul-2018");
         end = DateUtils.convertStringToTimestamp("01-dec-2018");
 
         termDAO.add(new TermRO(title, start, end));
+    }
+
+    @After
+    public void after(){
+        termDAO.clearDB(TERM_TABLE_NAME);
     }
 
     @Test
@@ -70,9 +72,9 @@ public class DBTest {
         assertEquals("list size was wrong", 2, terms.size());
 
         assertEquals("Title was incorrect for term 1 ", title, terms.get(0).getTitle());
-        assertEquals("Start date was incorrect ",
-                DateUtils.convertTimestampToString(start),
-                DateUtils.convertTimestampToString(terms.get(0).getStart()));
+                assertEquals("Start date was incorrect ",
+                        DateUtils.convertTimestampToString(start),
+                        DateUtils.convertTimestampToString(terms.get(0).getStart()));
         assertEquals("End date was incorrect ",
                 DateUtils.convertTimestampToString(end),
                 DateUtils.convertTimestampToString(terms.get(0).getEnd()));
@@ -94,4 +96,26 @@ public class DBTest {
         assertEquals("Term was found", null, term);
     }
 
+    @Test
+    public void testUpdateTerm() throws ParseException {
+
+        TermRO term = termDAO.get(1);
+        assertEquals("Title was different", title, term.getTitle());
+
+        TermRO updatedTerm = new TermRO("updated title",
+                DateUtils.convertStringToTimestamp("01-aug-2018"),
+                DateUtils.convertStringToTimestamp("01-jan-2019"));
+        updatedTerm.setId(1);
+        termDAO.update(updatedTerm);
+
+        term = termDAO.get(1);
+        assertEquals("Title was incorrect ", updatedTerm.getTitle(), term.getTitle());
+        assertEquals("Start date was incorrect ",
+                DateUtils.convertTimestampToString(updatedTerm.getStart()),
+                DateUtils.convertTimestampToString(term.getStart()));
+        assertEquals("End date was incorrect ",
+                DateUtils.convertTimestampToString(updatedTerm.getEnd()),
+                DateUtils.convertTimestampToString(updatedTerm.getEnd()));
+
+    }
 }

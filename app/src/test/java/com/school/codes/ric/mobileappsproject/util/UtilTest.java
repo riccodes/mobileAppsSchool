@@ -1,13 +1,11 @@
-package com.school.codes.ric.mobileappsproject;
-
-import com.school.codes.ric.mobileappsproject.util.DateUtils;
+package com.school.codes.ric.mobileappsproject.util;
 
 import org.junit.Test;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 //import  org.junit.jupiter.api.Assertions.assertThrows;
 
 /**

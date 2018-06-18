@@ -15,10 +15,8 @@ import java.util.List;
 
 import static com.school.codes.ric.mobileappsproject.util.Constants.*;
 
-public class TermDAO {
+public class TermDAO extends BaseDAO {
 
-    private SQLiteDatabase db;
-    private DBHelper helper;
     private final String[] ALL_TERM_COLUMNS = {
             TERM_TABLE_ID,
             TERM_TABLE_TITLE,
@@ -27,7 +25,7 @@ public class TermDAO {
     };
 
     public TermDAO(Context context) {
-        helper = new DBHelper(context);
+        super(context);
     }
 
     public void add(TermRO term) {
@@ -101,18 +99,17 @@ public class TermDAO {
         close();
     }
 
-    private void open() throws SQLException {
-        db = helper.getWritableDatabase();
-    }
-
-    private void close() {
-        helper.close();
-    }
-
-    public void clearDB() {
+    public void update(TermRO term) {
         open();
-        db.execSQL("delete from " + TERM_TABLE_NAME);
+
+        String whereClause = "_id=" + term.getId();
+        ContentValues cv = new ContentValues();
+        cv.put(TERM_TABLE_TITLE, term.getTitle());
+        cv.put(TERM_TABLE_START, DateUtils.convertTimestampToString(term.getStart()));
+        cv.put(TERM_TABLE_END, DateUtils.convertTimestampToString(term.getEnd()));
+
+        db.update(TERM_TABLE_NAME, cv, whereClause, null);
+
         close();
     }
-
 }
