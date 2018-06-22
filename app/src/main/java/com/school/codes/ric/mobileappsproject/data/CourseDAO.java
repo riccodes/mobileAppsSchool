@@ -20,6 +20,7 @@ import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE
 import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE_START;
 import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE_START_ALERT;
 import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE_STATUS;
+import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE_TERM_ID;
 import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE_TITLE;
 
 public class CourseDAO extends BaseDAO {
@@ -33,7 +34,8 @@ public class CourseDAO extends BaseDAO {
             COURSE_TABLE_MENTOR,
             COURSE_TABLE_NOTES,
             COURSE_TABLE_START_ALERT,
-            COURSE_TABLE_END_ALERT
+            COURSE_TABLE_END_ALERT,
+            COURSE_TABLE_TERM_ID
     };
 
     public CourseDAO(Context context) {
@@ -82,6 +84,7 @@ public class CourseDAO extends BaseDAO {
             course.setNotes(c.getString(6));
             course.setStartAlert(DateUtils.convertStringToTimestamp(c.getString(7)));
             course.setEndAlert(DateUtils.convertStringToTimestamp(c.getString(8)));
+            course.setTermId(c.getInt(9));
             c.close();
         }
 
@@ -111,6 +114,7 @@ public class CourseDAO extends BaseDAO {
             course.setNotes(c.getString(6));
             course.setStartAlert(DateUtils.convertStringToTimestamp(c.getString(7)));
             course.setEndAlert(DateUtils.convertStringToTimestamp(c.getString(8)));
+            course.setTermId(c.getInt(9));
 
             courses.add(course);
             c.moveToNext();
@@ -133,18 +137,54 @@ public class CourseDAO extends BaseDAO {
 
         String whereClause = "_id=" + course.getId();
         ContentValues cv = new ContentValues();
+        cv.put(COURSE_TABLE_TERM_ID, course.getTermId());
         cv.put(COURSE_TABLE_TITLE, course.getTitle());
         cv.put(COURSE_TABLE_START, DateUtils.convertTimestampToString(course.getStart()));
         cv.put(COURSE_TABLE_END, DateUtils.convertTimestampToString(course.getEnd()));
         cv.put(COURSE_TABLE_STATUS, course.getStatus());
         cv.put(COURSE_TABLE_MENTOR, course.getMentor());
         cv.put(COURSE_TABLE_NOTES, course.getNotes());
-        cv.put(COURSE_TABLE_START_ALERT, DateUtils.convertTimestampToString(course.getStartAlert()));
-        cv.put(COURSE_TABLE_END_ALERT, DateUtils.convertTimestampToString(course.getEndAlert()));
+        cv.put(COURSE_TABLE_START_ALERT,
+                DateUtils.convertTimestampToString(course.getStartAlert()));
+        cv.put(COURSE_TABLE_END_ALERT,
+                DateUtils.convertTimestampToString(course.getEndAlert()));
 
         db.update(COURSE_TABLE_NAME, cv, whereClause, null);
 
         close();
     }
 
+    public List<CourseRO> getAllAssociated(int termId) throws ParseException {
+        open();
+
+        String whereClause = COURSE_TABLE_TERM_ID + "=?";
+        String[] args = {termId + ""};
+
+        Cursor c = db.query(COURSE_TABLE_NAME, ALL_COURSE_COLUMNS, whereClause, args,
+                null, null, null);
+
+        List<CourseRO> courses = new ArrayList<>();
+        c.moveToFirst();
+        for (int i = 0; i < c.getCount(); i++) {
+            CourseRO course = new CourseRO();
+            course.setId(c.getInt(0));
+            course.setTitle(c.getString(1));
+            course.setStart(DateUtils.convertStringToTimestamp(c.getString(2)));
+            course.setEnd(DateUtils.convertStringToTimestamp(c.getString(3)));
+            course.setStatus(c.getString(4));
+            course.setMentor(c.getString(5));
+            course.setNotes(c.getString(6));
+            course.setStartAlert(DateUtils.convertStringToTimestamp(c.getString(7)));
+            course.setEndAlert(DateUtils.convertStringToTimestamp(c.getString(8)));
+            course.setTermId(c.getInt(9));
+
+            courses.add(course);
+            c.moveToNext();
+        }
+
+        c.close();
+        close();
+
+        return courses;
+    }
 }

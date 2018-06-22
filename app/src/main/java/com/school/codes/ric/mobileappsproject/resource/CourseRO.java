@@ -9,6 +9,7 @@ public class CourseRO extends BaseRO {
     private String notes;
     private Timestamp startAlert;
     private Timestamp endAlert;
+    private int termId;
 
     public CourseRO(String title, Timestamp start, Timestamp end) {
         super(title, start, end);
@@ -26,6 +27,14 @@ public class CourseRO extends BaseRO {
 
     public CourseRO() {
         super();
+    }
+
+    public int getTermId() {
+        return termId;
+    }
+
+    public void setTermId(int termId) {
+        this.termId = termId;
     }
 
     public String getStatus() {

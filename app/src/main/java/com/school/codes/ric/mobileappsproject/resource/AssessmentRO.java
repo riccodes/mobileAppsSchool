@@ -6,6 +6,7 @@ public class AssessmentRO extends BaseRO {
 
     private AssessmentType type;
     private Timestamp goalDate;
+    private int courseId;
 
     public AssessmentRO(String title, AssessmentType type, Timestamp goalDate) {
         super(title, null, null);
@@ -14,6 +15,14 @@ public class AssessmentRO extends BaseRO {
     }
 
     public AssessmentRO() {
+    }
+
+    public int getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(int courseId) {
+        this.courseId = courseId;
     }
 
     public AssessmentType getType() {

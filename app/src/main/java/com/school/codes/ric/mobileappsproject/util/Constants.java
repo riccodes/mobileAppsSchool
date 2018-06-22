@@ -10,6 +10,7 @@ public class Constants {
 
     public static final String COURSE_TABLE_NAME = "courses";
     public static final String COURSE_TABLE_ID = "_id";
+    public static final String COURSE_TABLE_TERM_ID = "term_id";
     public static final String COURSE_TABLE_TITLE = "title";
     public static final String COURSE_TABLE_START = "start_date";
     public static final String COURSE_TABLE_END = "end_date";
@@ -21,6 +22,7 @@ public class Constants {
 
     public static final String ASSESSMENT_TABLE_NAME = "assessments";
     public static final String ASSESSMENT_TABLE_ID = "_id";
+    public static final String ASSESSMENT_TABLE_COURSE_ID = "course_id";
     public static final String ASSESSMENT_TABLE_TITLE = "title";
     public static final String ASSESSMENT_TABLE_GOAL = "goal_date";
     public static final String ASSESSMENT_TABLE_TYPE = "type";

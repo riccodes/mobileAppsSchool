@@ -19,6 +19,7 @@ import java.util.List;
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
 import static com.school.codes.ric.mobileappsproject.util.Constants.TERM_TABLE_NAME;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = LOLLIPOP, packageName = "com.school.codes.ric.mobileappsproject")
@@ -117,5 +118,10 @@ public class TermDAOTest {
                 DateUtils.convertTimestampToString(updatedTerm.getEnd()),
                 DateUtils.convertTimestampToString(updatedTerm.getEnd()));
 
+    }
+
+    @Test
+    public void testTermShouldNotBeDeletedIfCourseAssociated() {
+        fail("Not implemented"); //todo: make this work
     }
 }

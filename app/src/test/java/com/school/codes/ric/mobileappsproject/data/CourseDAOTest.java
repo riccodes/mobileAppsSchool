@@ -26,6 +26,7 @@ import static org.junit.Assert.fail;
 public class CourseDAOTest {
 
     private CourseDAO courseDAO;
+    private CourseRO course;
     private String title;
     private Timestamp start;
     private Timestamp end;
@@ -49,8 +50,8 @@ public class CourseDAOTest {
         startAlert = DateUtils.convertStringToTimestamp("30-jun-2018");
         endAlert = DateUtils.convertStringToTimestamp("30-nov-2018");
 
-        courseDAO.add(new CourseRO(
-                title, start, end, status, mentor, notes, startAlert, endAlert));
+        course = new CourseRO(title, start, end, status, mentor, notes, startAlert, endAlert);
+        courseDAO.add(course);
     }
 
     @After
@@ -150,9 +151,6 @@ public class CourseDAOTest {
     @Test
     public void testUpdateCourse() throws ParseException {
 
-        CourseRO course = courseDAO.get(1);
-        assertEquals("Title was different", title, course.getTitle());
-
         CourseRO updatedCourse = new CourseRO("updated title",
                 DateUtils.convertStringToTimestamp("01-aug-2018"),
                 DateUtils.convertStringToTimestamp("01-jan-2019"),
@@ -160,6 +158,7 @@ public class CourseDAOTest {
                 DateUtils.convertStringToTimestamp("31-jul-2018"),
                 DateUtils.convertStringToTimestamp("31-dec-2018"));
         updatedCourse.setId(1);
+        updatedCourse.setTermId(101);
         courseDAO.update(updatedCourse);
 
         course = courseDAO.get(1);
@@ -171,7 +170,7 @@ public class CourseDAOTest {
                 DateUtils.convertTimestampToString(course.getStart()));
         assertEquals("End date was incorrect ",
                 DateUtils.convertTimestampToString(updatedCourse.getEnd()),
-                DateUtils.convertTimestampToString(updatedCourse.getEnd()));
+                DateUtils.convertTimestampToString(course.getEnd()));
         assertEquals("Status was incorrect ",
                 updatedCourse.getStatus(),
                 course.getStatus());
@@ -186,7 +185,38 @@ public class CourseDAOTest {
                 DateUtils.convertTimestampToString(course.getStartAlert()));
         assertEquals("End date Alert was incorrect ",
                 DateUtils.convertTimestampToString(updatedCourse.getEndAlert()),
-                DateUtils.convertTimestampToString(updatedCourse.getEndAlert()));
+                DateUtils.convertTimestampToString(course.getEndAlert()));
+        assertEquals("term id was incorrect ",
+                updatedCourse.getTermId(),
+                course.getTermId());
 
     }
+
+    @Test
+    public void testGetAllAssociatedAssessments() throws ParseException {
+        int termId = 100;
+
+        course.setTermId(termId);
+        course.setId(1);
+        courseDAO.update(course);
+
+        CourseRO c2 = new CourseRO("c2", start, end, status, mentor, notes,
+                startAlert, endAlert);
+        courseDAO.add(c2);
+        c2.setTermId(termId);
+        c2.setId(2);
+        courseDAO.update(c2);
+
+        List<CourseRO> courses = courseDAO.getAllAssociated(termId);
+        assertEquals("size was incorrect", 2, courses.size());
+        assertEquals("title 1 was incorrect", course.getTitle(),
+                courses.get(0).getTitle());
+        assertEquals("title 2 was incorrect", c2.getTitle(), courses.get(1).getTitle());
+    }
+
+    @Test
+    public void testCourseShouldNotBeDeletedIfAssessmentAssociated() {
+        fail("Not implemented"); //todo: make this work
+    }
+
 }

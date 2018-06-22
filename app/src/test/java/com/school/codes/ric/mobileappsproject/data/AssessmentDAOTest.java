@@ -19,9 +19,7 @@ import java.util.List;
 
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
 import static com.school.codes.ric.mobileappsproject.util.Constants.ASSESSMENT_TABLE_NAME;
-import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE_NAME;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = LOLLIPOP, packageName = "com.school.codes.ric.mobileappsproject")
@@ -92,53 +90,66 @@ public class AssessmentDAOTest {
 
     @Test
     public void testDeleteAssessment() throws ParseException {
-//        assessmentDAO.delete(1);
-//        CourseRO course = assessmentDAO.get(1);
-//        assertEquals("course was found", null, course);
-        fail("not implemented");
+        assessmentDAO.delete(1);
+        AssessmentRO assessment = assessmentDAO.get(1);
+        assertEquals("assessment was found", null, assessment);
     }
 
     @Test
     public void testUpdateAssessment() throws ParseException {
 
-//        CourseRO course = assessmentDAO.get(1);
-//        assertEquals("Title was different", title, course.getTitle());
-//
-//        CourseRO updatedCourse = new CourseRO("updated title",
-//                DateUtils.convertStringToTimestamp("01-aug-2018"),
-//                DateUtils.convertStringToTimestamp("01-jan-2019"),
-//                "updated status","updated mentor","updated notes",
-//                DateUtils.convertStringToTimestamp("31-jul-2018"),
-//                DateUtils.convertStringToTimestamp("31-dec-2018"));
-//        updatedCourse.setId(1);
-//        assessmentDAO.update(updatedCourse);
-//
-//        course = assessmentDAO.get(1);
-//        assertEquals("Title was incorrect ",
-//                updatedCourse.getTitle(),
-//                course.getTitle());
-//        assertEquals("Start date was incorrect ",
-//                DateUtils.convertTimestampToString(updatedCourse.getStart()),
-//                DateUtils.convertTimestampToString(course.getStart()));
-//        assertEquals("End date was incorrect ",
-//                DateUtils.convertTimestampToString(updatedCourse.getEnd()),
-//                DateUtils.convertTimestampToString(updatedCourse.getEnd()));
-//        assertEquals("Status was incorrect ",
-//                updatedCourse.getStatus(),
-//                course.getStatus());
-//        assertEquals("Mentor was incorrect ",
-//                updatedCourse.getMentor(),
-//                course.getMentor());
-//        assertEquals("Notes were incorrect ",
-//                updatedCourse.getNotes(),
-//                course.getNotes());
-//        assertEquals("Start date Alert was incorrect ",
-//                DateUtils.convertTimestampToString(updatedCourse.getStartAlert()),
-//                DateUtils.convertTimestampToString(course.getStartAlert()));
-//        assertEquals("End date Alert was incorrect ",
-//                DateUtils.convertTimestampToString(updatedCourse.getEndAlert()),
-//                DateUtils.convertTimestampToString(updatedCourse.getEndAlert()));
-        fail("not implemented");
+        AssessmentRO assessment = assessmentDAO.get(1);
+        assertEquals("Title was different", title, assessment.getTitle());
+
+        AssessmentRO assessmentUpdate = new AssessmentRO("updated title",
+                AssessmentRO.AssessmentType.OBJECTIVE,
+                DateUtils.convertStringToTimestamp("31-jul-2018"));
+        assessmentUpdate.setId(1);
+        assessmentDAO.update(assessmentUpdate);
+
+        assessment = assessmentDAO.get(1);
+        assertEquals("Title was incorrect ",
+                assessmentUpdate.getTitle(),
+                assessment.getTitle());
+        assertEquals("Type was incorrect ", assessmentUpdate.getType(),
+                assessment.getType());
+        assertEquals("Goal Alert was incorrect ",
+                DateUtils.convertTimestampToString(assessmentUpdate.getGoalDate()),
+                DateUtils.convertTimestampToString(assessment.getGoalDate()));
+
+    }
+
+    @Test
+    public void testGetAllAssociatedAssessments() throws ParseException {
+
+        AssessmentRO a3 = new AssessmentRO("a3", AssessmentRO.AssessmentType.PERFORMANCE,
+                DateUtils.convertStringToTimestamp("10-oct-2016"));
+        assessmentDAO.add(a3);
+        a3.setCourseId(101);
+        assessmentDAO.update(a3);
+
+        AssessmentRO a2 = new AssessmentRO("a2", AssessmentRO.AssessmentType.PERFORMANCE,
+                DateUtils.convertStringToTimestamp("10-oct-2016"));
+        assessmentDAO.add(a2);
+
+        CourseRO course = new CourseRO();
+        course.setId(100);
+
+        AssessmentRO a1 = assessmentDAO.get(1);
+        a1.setCourseId(course.getId());
+        assessmentDAO.update(a1);
+
+        a2 = assessmentDAO.get(2);
+        a2.setCourseId(course.getId());
+        assessmentDAO.update(a2);
+
+        List<AssessmentRO> assessments =
+                assessmentDAO.getAllAssessmentsForCourse(course.getId());
+        assertEquals("size was incorrect", 2, assessments.size());
+        assertEquals("title was incorrect for item one", a1.getTitle(),
+                assessments.get(0).getTitle());
+        assertEquals("title was incorrect for item two", a2.getTitle(),
+                assessments.get(1).getTitle());
 
     }
 }

@@ -3,7 +3,29 @@ package com.school.codes.ric.mobileappsproject.data;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import static com.school.codes.ric.mobileappsproject.util.Constants.*;
+
+import static com.school.codes.ric.mobileappsproject.util.Constants.ASSESSMENT_TABLE_COURSE_ID;
+import static com.school.codes.ric.mobileappsproject.util.Constants.ASSESSMENT_TABLE_GOAL;
+import static com.school.codes.ric.mobileappsproject.util.Constants.ASSESSMENT_TABLE_ID;
+import static com.school.codes.ric.mobileappsproject.util.Constants.ASSESSMENT_TABLE_NAME;
+import static com.school.codes.ric.mobileappsproject.util.Constants.ASSESSMENT_TABLE_TITLE;
+import static com.school.codes.ric.mobileappsproject.util.Constants.ASSESSMENT_TABLE_TYPE;
+import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE_END;
+import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE_END_ALERT;
+import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE_ID;
+import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE_MENTOR;
+import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE_NAME;
+import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE_NOTES;
+import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE_START;
+import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE_START_ALERT;
+import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE_STATUS;
+import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE_TERM_ID;
+import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE_TITLE;
+import static com.school.codes.ric.mobileappsproject.util.Constants.TERM_TABLE_END;
+import static com.school.codes.ric.mobileappsproject.util.Constants.TERM_TABLE_ID;
+import static com.school.codes.ric.mobileappsproject.util.Constants.TERM_TABLE_NAME;
+import static com.school.codes.ric.mobileappsproject.util.Constants.TERM_TABLE_START;
+import static com.school.codes.ric.mobileappsproject.util.Constants.TERM_TABLE_TITLE;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -43,7 +65,11 @@ public class DBHelper extends SQLiteOpenHelper {
             COURSE_TABLE_START_ALERT +
             " datetime not null, " +
             COURSE_TABLE_END_ALERT +
-            " datetime not null" +
+            " datetime not null, " +
+            COURSE_TABLE_TERM_ID +
+            " integer, " +
+            " FOREIGN KEY(" + COURSE_TABLE_TERM_ID + ")" +
+            " REFERENCES " + TERM_TABLE_NAME + "(" + TERM_TABLE_ID + ")" +
             ")";
     private static final String CREATE_ASSESSMENT_TABLE= "create table " +
             ASSESSMENT_TABLE_NAME +
@@ -55,7 +81,11 @@ public class DBHelper extends SQLiteOpenHelper {
             ASSESSMENT_TABLE_GOAL +
             " datetime not null, " +
             ASSESSMENT_TABLE_TYPE +
-            " text not null" +
+            " text not null, " +
+            ASSESSMENT_TABLE_COURSE_ID +
+            " integer, " +
+            " FOREIGN KEY(" + ASSESSMENT_TABLE_COURSE_ID + ")" +
+            " REFERENCES " + COURSE_TABLE_NAME + "(" + COURSE_TABLE_ID + ")" +
             ")";
 
 
@@ -65,16 +95,17 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CREATE_TERM_TABLE);
-        db.execSQL(CREATE_COURSE_TABLE);
         db.execSQL(CREATE_ASSESSMENT_TABLE);
+        db.execSQL(CREATE_COURSE_TABLE);
+        db.execSQL(CREATE_TERM_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
-        db.execSQL(DROP + TERM_TABLE_NAME);
-        db.execSQL(DROP + COURSE_TABLE_NAME);
         db.execSQL(DROP + ASSESSMENT_TABLE_NAME);
+        db.execSQL(DROP + COURSE_TABLE_NAME);
+        db.execSQL(DROP + TERM_TABLE_NAME);
+
         onCreate(db);
     }
 }
