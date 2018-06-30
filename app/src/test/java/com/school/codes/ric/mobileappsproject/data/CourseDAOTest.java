@@ -1,7 +1,11 @@
 package com.school.codes.ric.mobileappsproject.data;
 
+import android.database.sqlite.SQLiteException;
+
 import com.school.codes.ric.mobileappsproject.BuildConfig;
+import com.school.codes.ric.mobileappsproject.resource.AssessmentRO;
 import com.school.codes.ric.mobileappsproject.resource.CourseRO;
+import com.school.codes.ric.mobileappsproject.resource.TermRO;
 import com.school.codes.ric.mobileappsproject.util.DateUtils;
 
 import org.junit.After;
@@ -17,9 +21,10 @@ import java.text.ParseException;
 import java.util.List;
 
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
+import static com.school.codes.ric.mobileappsproject.util.Constants.ASSESSMENT_TABLE_NAME;
 import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE_NAME;
+import static com.school.codes.ric.mobileappsproject.util.Constants.TERM_TABLE_NAME;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = LOLLIPOP, packageName = "com.school.codes.ric.mobileappsproject")
@@ -57,6 +62,7 @@ public class CourseDAOTest {
     @After
     public void after(){
         courseDAO.clearDB(COURSE_TABLE_NAME);
+        courseDAO.clearDB(TERM_TABLE_NAME);
     }
 
     @Test
@@ -151,6 +157,8 @@ public class CourseDAOTest {
     @Test
     public void testUpdateCourse() throws ParseException {
 
+        addTerm();
+
         CourseRO updatedCourse = new CourseRO("updated title",
                 DateUtils.convertStringToTimestamp("01-aug-2018"),
                 DateUtils.convertStringToTimestamp("01-jan-2019"),
@@ -158,7 +166,7 @@ public class CourseDAOTest {
                 DateUtils.convertStringToTimestamp("31-jul-2018"),
                 DateUtils.convertStringToTimestamp("31-dec-2018"));
         updatedCourse.setId(1);
-        updatedCourse.setTermId(101);
+        updatedCourse.setTermId(1);
         courseDAO.update(updatedCourse);
 
         course = courseDAO.get(1);
@@ -193,9 +201,10 @@ public class CourseDAOTest {
     }
 
     @Test
-    public void testGetAllAssociatedAssessments() throws ParseException {
-        int termId = 100;
+    public void testGetAllAssociatedCourses() throws ParseException {
+        addTerm();
 
+        int termId = 1;
         course.setTermId(termId);
         course.setId(1);
         courseDAO.update(course);
@@ -215,8 +224,34 @@ public class CourseDAOTest {
     }
 
     @Test
-    public void testCourseShouldNotBeDeletedIfAssessmentAssociated() {
-        fail("Not implemented"); //todo: make this work
+    public void testCourseShouldNotBeDeletedIfAssessmentAssociated() throws ParseException {
+        AssessmentRO a = new AssessmentRO("title",
+                AssessmentRO.AssessmentType.PERFORMANCE,
+                DateUtils.convertStringToTimestamp("10-oct-2018"));
+        AssessmentDAO assessmentDAO = new AssessmentDAO(RuntimeEnvironment.application);
+        assessmentDAO.clearDB(ASSESSMENT_TABLE_NAME);
+        assessmentDAO.add(a);
+
+        a = assessmentDAO.get(1);
+        a.setCourseId(1);
+        assessmentDAO.update(a);
+
+        try {
+            courseDAO.delete(1);
+        } catch (SQLiteException e) {
+            assertEquals(" class was wrong",
+                    "class android.database.sqlite.SQLiteException",
+                    e.getClass().toString());
+        }
+
+        assessmentDAO.delete(1);
     }
 
+    private void addTerm() throws ParseException {
+        TermRO term = new TermRO("test term",
+                DateUtils.convertStringToTimestamp("01-jul-2018"),
+                DateUtils.convertStringToTimestamp("01-dec-2018"));
+        TermDAO termDAO = new TermDAO(RuntimeEnvironment.application);
+        termDAO.add(term);
+    }
 }

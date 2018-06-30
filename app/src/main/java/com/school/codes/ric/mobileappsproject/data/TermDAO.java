@@ -3,8 +3,6 @@ package com.school.codes.ric.mobileappsproject.data;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
 
 import com.school.codes.ric.mobileappsproject.resource.TermRO;
 import com.school.codes.ric.mobileappsproject.util.DateUtils;
@@ -13,7 +11,11 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.school.codes.ric.mobileappsproject.util.Constants.*;
+import static com.school.codes.ric.mobileappsproject.util.Constants.TERM_TABLE_END;
+import static com.school.codes.ric.mobileappsproject.util.Constants.TERM_TABLE_ID;
+import static com.school.codes.ric.mobileappsproject.util.Constants.TERM_TABLE_NAME;
+import static com.school.codes.ric.mobileappsproject.util.Constants.TERM_TABLE_START;
+import static com.school.codes.ric.mobileappsproject.util.Constants.TERM_TABLE_TITLE;
 
 public class TermDAO extends BaseDAO {
 
@@ -91,6 +93,24 @@ public class TermDAO extends BaseDAO {
         close();
 
         return terms;
+    }
+
+    public int getLastId() {
+        open();
+
+        int id = 0;
+        Cursor c;
+
+        c = db.query(TERM_TABLE_NAME, ALL_TERM_COLUMNS, null, null, null, null, null);
+        if (c.getCount() > 0) {
+            c.moveToLast();
+            id = c.getInt(0);
+        }
+
+        c.close();
+        close();
+
+        return id;
     }
 
     public void delete(int id) {

@@ -63,6 +63,28 @@ public class CourseDAO extends BaseDAO {
         close();
     }
 
+    public void addWithId(CourseRO course) {
+        open();
+
+        ContentValues cv = new ContentValues();
+
+        cv.put(COURSE_TABLE_ID, course.getId());
+        cv.put(COURSE_TABLE_TITLE, course.getTitle());
+        cv.put(COURSE_TABLE_START, DateUtils.convertTimestampToString(course.getStart()));
+        cv.put(COURSE_TABLE_END, DateUtils.convertTimestampToString(course.getEnd()));
+        cv.put(COURSE_TABLE_STATUS, course.getStatus());
+        cv.put(COURSE_TABLE_MENTOR, course.getMentor());
+        cv.put(COURSE_TABLE_NOTES, course.getNotes());
+        cv.put(COURSE_TABLE_START_ALERT,
+                DateUtils.convertTimestampToString(course.getStartAlert()));
+        cv.put(COURSE_TABLE_END_ALERT,
+                DateUtils.convertTimestampToString(course.getEndAlert()));
+
+        db.insert(COURSE_TABLE_NAME, null, cv);
+
+        close();
+    }
+
     public CourseRO get(int id) throws ParseException {
         open();
 
@@ -186,5 +208,30 @@ public class CourseDAO extends BaseDAO {
         close();
 
         return courses;
+    }
+
+    public void disassociate(CourseRO course) {
+        open();
+
+        delete(course.getId());
+        addWithId(copyCourse(course));
+
+        close();
+    }
+
+    private CourseRO copyCourse(CourseRO course) {
+        CourseRO c = new CourseRO();
+
+        c.setId(course.getId());
+        c.setTitle(course.getTitle());
+        c.setStart(course.getStart());
+        c.setEnd(course.getEnd());
+        c.setStatus(course.getStatus());
+        c.setMentor(course.getMentor());
+        c.setNotes(course.getNotes());
+        c.setStartAlert(course.getStartAlert());
+        c.setEndAlert(course.getEndAlert());
+
+        return c;
     }
 }
