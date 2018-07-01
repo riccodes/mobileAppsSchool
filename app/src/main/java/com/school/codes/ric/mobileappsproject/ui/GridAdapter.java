@@ -17,7 +17,7 @@ public class GridAdapter extends RecyclerView.Adapter {
 
     private List<CourseRO> items;
 
-    public GridAdapter(List<CourseRO> items) {
+    GridAdapter(List<CourseRO> items) {
         this.items = items;
     }
 
@@ -39,6 +39,14 @@ public class GridAdapter extends RecyclerView.Adapter {
         return items.size();
     }
 
+    public List<CourseRO> getItems() {
+        return items;
+    }
+
+    public void setItems(List<CourseRO> items) {
+        this.items = items;
+    }
+
     public class GridViewHolder extends RecyclerView.ViewHolder {
 
         private TextView titleTextView;
@@ -46,7 +54,7 @@ public class GridAdapter extends RecyclerView.Adapter {
         private TextView endTextView;
         private TextView extraTextView;
 
-        public GridViewHolder(View itemView) {
+        GridViewHolder(View itemView) {
             super(itemView);
 
             titleTextView = itemView.findViewById(R.id.titleTextView);
@@ -57,8 +65,7 @@ public class GridAdapter extends RecyclerView.Adapter {
         }
 
         private void bindView(int position) {
-            CourseRO item = items.get(position);
-
+            CourseRO item = getItems().get(position);
             titleTextView.setText(item.getTitle());
             startTextView.setText(DateUtils.convertTimestampToString(item.getStart()));
             endTextView.setText(DateUtils.convertTimestampToString(item.getEnd()));

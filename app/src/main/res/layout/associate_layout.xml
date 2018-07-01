@@ -1,8 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/recyclerView"
+    android:id="@+id/associateLayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_below="@+id/associateLayout"
-    tools:showIn="@layout/fragment_grid" />
+    android:layout_height="match_parent"
+    android:layout_below="@+id/datesLayout"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingEnd="3dp"
+        android:paddingStart="3dp"
+        android:text="@string/swipe_to_add_or_remove_courses" />
+
+    <android.support.v7.widget.RecyclerView
+
+        android:id="@+id/associateNewCoursesRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:showIn="@layout/fragment_grid" />
+
+</LinearLayout>

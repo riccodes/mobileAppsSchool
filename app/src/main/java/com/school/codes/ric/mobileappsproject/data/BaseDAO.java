@@ -6,18 +6,18 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class BaseDAO {
 
-    public SQLiteDatabase db;
+    SQLiteDatabase db;
     private DBHelper helper;
 
-    public BaseDAO(Context context){
+    BaseDAO(Context context) {
         helper = new DBHelper(context);
     }
 
-    public void open() throws SQLException {
+    void open() throws SQLException {
         db = helper.getWritableDatabase();
     }
 
-    public void close() {
+    void close() {
         helper.close();
     }
 

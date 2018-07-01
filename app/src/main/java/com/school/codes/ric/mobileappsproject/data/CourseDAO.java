@@ -63,7 +63,7 @@ public class CourseDAO extends BaseDAO {
         close();
     }
 
-    public void addWithId(CourseRO course) {
+    private void addWithId(CourseRO course) {
         open();
 
         ContentValues cv = new ContentValues();

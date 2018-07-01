@@ -7,10 +7,10 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/associateLayout"
+            android:id="@+id/associatedCoursesHeaderLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:paddingEnd="12dp"
                 android:paddingStart="12dp"
-                android:text="Associated Courses"
+                android:text="@string/associated_courses"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
@@ -33,14 +33,25 @@
                 android:layout_height="wrap_content"
                 android:paddingEnd="15dp"
                 android:paddingStart="15dp"
-                android:text="+"
-                android:textColor="@color/colorAccent"
+                android:background="@color/colorAccent"
+                android:text="@string/add_assoc"
+                android:textColor="@color/white"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
 
-        <include layout="@layout/associate_layout" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/associatedCoursesRecycler"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/associatedCoursesHeaderLayout" />
+
+        <include
+            layout="@layout/associate_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/associatedCoursesHeaderLayout" />
 
     </RelativeLayout>
 

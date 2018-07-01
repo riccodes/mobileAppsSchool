@@ -30,6 +30,8 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         fab:fab_addButtonSize="normal"
+        fab:fab_addButtonColorNormal="@color/colorAccent"
+        fab:fab_addButtonColorPressed="@color/textPrimary"
         fab:fab_labelStyle="@style/menu_labels_style"
         fab:fab_labelsPosition="left" />
 

@@ -28,7 +28,7 @@ public class AssessmentDAO extends BaseDAO {
             ASSESSMENT_TABLE_COURSE_ID
     };
 
-    public AssessmentDAO(Context context) {
+    AssessmentDAO(Context context) {
         super(context);
     }
 

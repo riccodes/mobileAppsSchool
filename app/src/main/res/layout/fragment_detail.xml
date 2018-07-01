@@ -24,7 +24,7 @@
             android:gravity="center"
             android:paddingBottom="30dp"
             android:paddingTop="2dp"
-            android:text="title"
+            android:text="@string/title"
             android:textColor="@color/colorAccent"
             android:textSize="22sp"
             android:textStyle="bold" />
@@ -34,7 +34,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/termTitleTextView"
-            android:text="20-oct-2018"
             android:textSize="18sp" />
 
         <TextView
@@ -42,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/termTitleTextView"
             android:layout_centerHorizontal="true"
-            android:text="-"
+            android:text="@string/dash"
             android:textSize="22sp"
             android:textStyle="bold" />
 
@@ -52,7 +51,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_below="@+id/termTitleTextView"
-            android:text="20-oct-2018"
             android:textSize="18sp" />
 
         <ImageView
@@ -63,7 +61,8 @@
             android:layout_alignParentTop="true"
             android:paddingTop="3dp"
             android:src="@android:drawable/ic_menu_delete"
-            android:tint="@android:color/holo_red_dark" />
+            android:contentDescription="@string/delete_term_desc"
+            android:tint="@android:color/holo_red_light" />
 
     </RelativeLayout>
 

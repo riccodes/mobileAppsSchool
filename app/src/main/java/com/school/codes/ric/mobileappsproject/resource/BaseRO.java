@@ -9,13 +9,13 @@ public class BaseRO {
     private Timestamp start;
     private Timestamp end;
 
-    public BaseRO(String title, Timestamp start, Timestamp end) {
+    BaseRO(String title, Timestamp start, Timestamp end) {
         this.title = title;
         this.start = start;
         this.end = end;
     }
 
-    public BaseRO() {
+    BaseRO() {
     }
 
     public int getId() {

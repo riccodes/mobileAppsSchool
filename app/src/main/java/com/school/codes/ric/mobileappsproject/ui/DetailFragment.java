@@ -1,9 +1,8 @@
 package com.school.codes.ric.mobileappsproject.ui;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,11 +12,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.school.codes.ric.mobileappsproject.R;
+import com.school.codes.ric.mobileappsproject.data.CourseDAO;
 import com.school.codes.ric.mobileappsproject.data.TermDAO;
+import com.school.codes.ric.mobileappsproject.resource.CourseRO;
 import com.school.codes.ric.mobileappsproject.resource.TermRO;
 import com.school.codes.ric.mobileappsproject.util.DateUtils;
 
 import java.text.ParseException;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,10 +61,13 @@ public class DetailFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_detail, container, false);
+        View root = Objects.requireNonNull(inflater).inflate(R.layout.fragment_detail,
+                container,
+                false);
 
+        assert this.getArguments() != null;
         int id = this.getArguments().getInt(ID);
 
         TextView termTitleTextView = root.findViewById(R.id.termTitleTextView);
@@ -72,14 +78,26 @@ public class DetailFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Snackbar deleteSnackBar = Snackbar.make(deleteTermImageView,
-                        "Delete " + term.getTitle() + "?",
+                        "Delete Term: " + term.getTitle() + "?",
                         Snackbar.LENGTH_LONG);
                 deleteSnackBar.setAction("OK", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        CourseDAO courseDAO = new CourseDAO(getContext());
+
+                        try {
+                            List<CourseRO> courses =
+                                    courseDAO.getAllAssociated(term.getId());
+                            for (CourseRO c : courses) {
+                                courseDAO.disassociate(c);
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
                         dao.delete(term.getId());
-                        Intent i = new Intent(getContext(), MainActivity.class);
-                        startActivity(i); //todo: attach homepage fragment instead
+
+                        mListener.goToHomePage();
                     }
                 }).show();
             }
@@ -98,21 +116,14 @@ public class DetailFragment extends Fragment {
         return root;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
         }
     }
 
@@ -133,7 +144,6 @@ public class DetailFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void goToHomePage();
     }
 }

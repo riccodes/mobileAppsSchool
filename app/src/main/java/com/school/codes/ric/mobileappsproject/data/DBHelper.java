@@ -88,7 +88,7 @@ public class DBHelper extends SQLiteOpenHelper {
             " REFERENCES " + COURSE_TABLE_NAME + "(" + COURSE_TABLE_ID + ")" +
             ")";
 
-    public DBHelper(Context context) {
+    DBHelper(Context context) {
         super(context, DB_NAME, null, VERSION);
     }
 

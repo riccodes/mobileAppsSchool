@@ -20,13 +20,14 @@
                 android:id="@+id/titleSpan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Title:" />
+                android:text="@string/title" />
 
             <EditText
                 android:id="@+id/titleEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/titleSpan" />
+                android:hint="@string/enter_title"
+                android:inputType="text" />
 
         </LinearLayout>
 
@@ -44,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:text="Start Date:" />
+                android:text="@string/start_date" />
 
             <TextView
                 android:id="@+id/startDate"
@@ -53,14 +54,14 @@
                 android:layout_toEndOf="@+id/startSpan"
                 android:paddingEnd="3dp"
                 android:paddingStart="3dp"
-                android:text="Select A Date" />
+                android:text="@string/select_a_date" />
 
             <TextView
                 android:id="@+id/endDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:text="Select A Date" />
+                android:text="@string/select_a_date" />
 
             <TextView
                 android:id="@+id/endSpan"
@@ -69,31 +70,11 @@
                 android:layout_toStartOf="@+id/endDate"
                 android:paddingEnd="3dp"
                 android:paddingStart="3dp"
-                android:text="End Date:" />
+                android:text="@string/end_date" />
 
         </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/associatedLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/datesLayout"
-            android:orientation="vertical"
-            android:padding="5dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingEnd="3dp"
-                android:paddingStart="3dp"
-                android:text="Swipe to add or remove courses: " />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/associatedCoursesRecycler"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
+        <include layout="@layout/associate_layout" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -109,8 +90,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:background="@android:color/transparent"
-                android:text="Cancel" />
+                android:background="@color/white"
+                android:text="@string/cancel" />
 
             <Button
                 android:id="@+id/saveButton"
@@ -118,7 +99,7 @@
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@+id/cancelButton"
                 android:background="@color/colorAccent"
-                android:text="Save"
+                android:text="@string/save"
                 android:textColor="@color/white" />
 
         </RelativeLayout>
