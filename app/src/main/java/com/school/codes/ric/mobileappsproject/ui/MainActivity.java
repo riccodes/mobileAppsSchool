@@ -15,7 +15,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -33,13 +32,22 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         AddTermFragment.OnFragmentInteractionListener,
-        DetailFragment.OnFragmentInteractionListener {
+        TermDetailFragment.OnFragmentInteractionListener,
+        AddCourseFragment.OnFragmentInteractionListener,
+        CourseGridFragment.OnCourseInteractionListener,
+        CourseDetailFragment.OnFragmentInteractionListener,
+        AllCoursesGridFragment.OnCourseInteractionListener,
+        AssessmentGridFragment.OnAssessmentInteractionListener,
+        AddAssessmentFragment.OnAssessmentInteractionListener,
+        AssessmentDetailFragment.OnAssessmentInteractionListener,
+        AllAssessmentGridFragment.OnAssessmentInteractionListener {
 
+    private static final String COURSES_INTENT = "COURSES_INTENT";
+    private static final String ASSESSMENTS_INTENT = "ASSESSMENTS_INTENT";
+    private static final String TAG = MainActivity.class.getSimpleName();
     private FragmentManager manager;
     private NavigationView navigationView;
     private Menu navMenu;
-
-    private FloatingActionButton addCourse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +76,7 @@ public class MainActivity extends AppCompatActivity
         populateDrawerMenu();
 
 
-//        createTestCourses();
+//        createTestCourses(); TODO: REMOVE
 
 
     }
@@ -132,10 +140,16 @@ public class MainActivity extends AppCompatActivity
 
         navMenu.clear();
         Menu termMenu = navMenu.addSubMenu("Terms");
+        MenuItem courseMenu = navMenu.add("Courses");
+        MenuItem assessmentMenu = navMenu.add("Assessments");
+
         assert terms != null;
         for (TermRO t : terms) {
             termMenu.add(t.getTitle()).setIntent(new Intent(t.getId() + ""));
         }
+
+        courseMenu.setIntent(new Intent(COURSES_INTENT));
+        assessmentMenu.setIntent(new Intent(ASSESSMENTS_INTENT));
 
         navigationView.invalidate();
     }
@@ -145,10 +159,10 @@ public class MainActivity extends AppCompatActivity
 
         final FloatingActionButton addTerm = new FloatingActionButton(this);
         addTerm.setTitle(getString(R.string.add_term));
-        addTerm.setSize(FloatingActionButton.SIZE_MINI);
         addTerm.setIconDrawable(getResources()
                 .getDrawable(android.R.drawable.ic_menu_day,
                 getTheme()));
+        addTerm.setSize(FloatingActionButton.SIZE_MINI);
         addTerm.setColorNormal(ContextCompat.getColor(getApplicationContext(),
                 R.color.colorAccent));
         addTerm.setColorPressed((ContextCompat.getColor(getApplicationContext(),
@@ -164,7 +178,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        addCourse = new FloatingActionButton(this);
+        FloatingActionButton addCourse = new FloatingActionButton(this);
         addCourse.setTitle(getString(R.string.add_course));
         addCourse.setSize(FloatingActionButton.SIZE_MINI);
         addCourse.setColorNormal(ContextCompat.getColor(getApplicationContext(),
@@ -177,8 +191,11 @@ public class MainActivity extends AppCompatActivity
         addCourse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),
-                        addCourse.getTitle(), Toast.LENGTH_SHORT).show();
+                clearAllFragments();
+                AddCourseFragment addFrag = AddCourseFragment.newInstance();
+                manager.beginTransaction()
+                        .replace(R.id.mainLayout, addFrag).commit();
+                fabMenu.collapse();
             }
         });
 
@@ -195,8 +212,11 @@ public class MainActivity extends AppCompatActivity
         addAssessment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), addAssessment.getTitle(),
-                        Toast.LENGTH_SHORT).show();
+                clearAllFragments();
+                AddAssessmentFragment addFrag = AddAssessmentFragment.newInstance();
+                manager.beginTransaction()
+                        .replace(R.id.mainLayout, addFrag).commit();
+                fabMenu.collapse();
             }
         });
 
@@ -214,12 +234,58 @@ public class MainActivity extends AppCompatActivity
     private void displayTermView(int id) {
         clearAllFragments();
 
-        GridFragment frag = GridFragment.newInstance(id);
-        DetailFragment detailFrag = DetailFragment.newInstance(id);
+        CourseGridFragment frag = CourseGridFragment.newInstance(id);
+        TermDetailFragment detailFrag = TermDetailFragment.newInstance(id);
 
         manager.beginTransaction()
                 .replace(R.id.detailFrameLayout, detailFrag)
                 .replace(R.id.contentFrameLayout, frag)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void displayCourseView(int id) {
+        clearAllFragments();
+
+        AssessmentGridFragment frag = AssessmentGridFragment.newInstance(id);
+        CourseDetailFragment detailFrag = CourseDetailFragment.newInstance(id);
+
+        manager.beginTransaction()
+                .replace(R.id.detailFrameLayout, detailFrag)
+                .replace(R.id.contentFrameLayout, frag)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void displayAllAssessments() {
+        clearAllFragments();
+
+        AllAssessmentGridFragment frag = AllAssessmentGridFragment.newInstance();
+
+        manager.beginTransaction()
+                .replace(R.id.contentFrameLayout, frag)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void displayAllCourses() {
+        clearAllFragments();
+
+        AllCoursesGridFragment frag = AllCoursesGridFragment.newInstance();
+
+        manager.beginTransaction()
+                .replace(R.id.contentFrameLayout, frag)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void displayAssessmentView(int id) {
+        clearAllFragments();
+
+        AssessmentDetailFragment detailFrag = AssessmentDetailFragment.newInstance(id);
+
+        manager.beginTransaction()
+                .replace(R.id.detailFrameLayout, detailFrag)
                 .addToBackStack(null)
                 .commit();
     }
@@ -259,10 +325,18 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int currentTermId =
-                Integer.parseInt(Objects.requireNonNull(item).getIntent().getAction());
 
-        displayTermView(currentTermId);
+        if (Objects.requireNonNull(item).getIntent().getAction().equalsIgnoreCase(COURSES_INTENT)) {
+            displayAllCourses();
+        } else if (Objects.requireNonNull(item).getIntent().getAction().equalsIgnoreCase(ASSESSMENTS_INTENT)) {
+            displayAllAssessments();
+        } else {
+            int currentTermId =
+                    Integer.parseInt(Objects.requireNonNull(item).getIntent().getAction());
+
+            displayTermView(currentTermId);
+        }
+
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -273,6 +347,28 @@ public class MainActivity extends AppCompatActivity
     public void onTermFinalized(int termId) {
         displayTermView(termId);
         populateDrawerMenu();
+    }
+
+    @Override
+    public void onAssessmentFinalized(int assessmentId) {
+        displayAssessmentView(assessmentId);
+        populateDrawerMenu();
+    }
+
+    @Override
+    public void onCourseFinalized(int courseId) {
+        displayCourseView(courseId);
+        populateDrawerMenu();
+    }
+
+    @Override
+    public void onCourseClicked(int id) {
+        displayCourseView(id);
+    }
+
+    @Override
+    public void onAssessmentClicked(int id) {
+        displayAssessmentView(id);
     }
 
     @Override

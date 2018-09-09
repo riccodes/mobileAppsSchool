@@ -27,4 +27,11 @@ public class Constants {
     public static final String ASSESSMENT_TABLE_GOAL = "goal_date";
     public static final String ASSESSMENT_TABLE_TYPE = "type";
 
+    public static final String ASSOCIATE_TEXT = "Swipe to add or remove ";
+
+    public static final String DROPPED_STATUS = "DROPPED";
+    public static final String IN_PROGRESS_STATUS = "IN PROGRESS";
+    public static final String COMPLETE_STATUS = "COMPLETE";
+    public static final String PLAN_STATUS = "PLANNED";
+
 }

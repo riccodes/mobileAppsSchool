@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".ui.GridFragment">
+    tools:context=".ui.CourseGridFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -18,12 +18,12 @@
             android:padding="10dp">
 
             <TextView
-                android:id="@+id/courses"
+                android:id="@+id/assessments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingEnd="12dp"
                 android:paddingStart="12dp"
-                android:text="@string/associated_courses"
+                android:text="@string/associated_assessments"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 

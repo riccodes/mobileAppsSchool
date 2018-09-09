@@ -3,6 +3,7 @@ package com.school.codes.ric.mobileappsproject.data;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.school.codes.ric.mobileappsproject.resource.CourseRO;
 import com.school.codes.ric.mobileappsproject.util.DateUtils;
@@ -24,6 +25,7 @@ import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE
 import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE_TITLE;
 
 public class CourseDAO extends BaseDAO {
+    public static final String TAG = CourseDAO.class.getSimpleName();
 
     private final String[] ALL_COURSE_COLUMNS = {
             COURSE_TABLE_ID,
@@ -59,6 +61,8 @@ public class CourseDAO extends BaseDAO {
                 DateUtils.convertTimestampToString(course.getEndAlert()));
 
         db.insert(COURSE_TABLE_NAME, null, cv);
+        Log.d(TAG, "add():" + course);
+        Log.d(TAG, "add id:" + getLastId());
 
         close();
     }
@@ -144,7 +148,7 @@ public class CourseDAO extends BaseDAO {
 
         c.close();
         close();
-
+        Log.d(TAG, "getAll():" + courses.size());
         return courses;
     }
 
@@ -159,7 +163,7 @@ public class CourseDAO extends BaseDAO {
 
         String whereClause = "_id=" + course.getId();
         ContentValues cv = new ContentValues();
-        cv.put(COURSE_TABLE_TERM_ID, course.getTermId());
+
         cv.put(COURSE_TABLE_TITLE, course.getTitle());
         cv.put(COURSE_TABLE_START, DateUtils.convertTimestampToString(course.getStart()));
         cv.put(COURSE_TABLE_END, DateUtils.convertTimestampToString(course.getEnd()));
@@ -171,8 +175,13 @@ public class CourseDAO extends BaseDAO {
         cv.put(COURSE_TABLE_END_ALERT,
                 DateUtils.convertTimestampToString(course.getEndAlert()));
 
-        db.update(COURSE_TABLE_NAME, cv, whereClause, null);
+        if (course.getTermId() != 0) {
+            cv.put(COURSE_TABLE_TERM_ID, course.getTermId());
+        }
 
+        db.update(COURSE_TABLE_NAME, cv, whereClause, null);
+        Log.d(TAG, "update():" + course);
+        Log.d(TAG, "update id:" + course.getId());
         close();
     }
 
@@ -233,5 +242,23 @@ public class CourseDAO extends BaseDAO {
         c.setEndAlert(course.getEndAlert());
 
         return c;
+    }
+
+    public int getLastId() {
+        open();
+
+        int id = 0;
+        Cursor c;
+
+        c = db.query(COURSE_TABLE_NAME, ALL_COURSE_COLUMNS, null, null, null, null, null);
+        if (c.getCount() > 0) {
+            c.moveToLast();
+            id = c.getInt(0);
+        }
+
+        c.close();
+        close();
+
+        return id;
     }
 }

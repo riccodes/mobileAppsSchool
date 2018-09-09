@@ -14,23 +14,25 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.school.codes.ric.mobileappsproject.R;
-import com.school.codes.ric.mobileappsproject.data.CourseDAO;
+import com.school.codes.ric.mobileappsproject.data.AssessmentDAO;
+import com.school.codes.ric.mobileappsproject.resource.AssessmentRO;
 import com.school.codes.ric.mobileappsproject.resource.CourseRO;
-import com.school.codes.ric.mobileappsproject.resource.TermRO;
 
 import java.text.ParseException;
 import java.util.List;
 
-public class AssociateAdapter extends RecyclerView.Adapter<AssociateAdapter.ViewHolder> {
+public class AssociateAssessmentAdapter extends RecyclerView.Adapter<AssociateAssessmentAdapter.ViewHolder> {
 
-    private List<CourseRO> items;
-    private TermRO parent;
+    private static final String TAG = AssociateAssessmentAdapter.class.getSimpleName();
+
+    private List<AssessmentRO> items;
+    private CourseRO parent;
     private Context context;
 
-    AssociateAdapter(List<CourseRO> items,
-                     TermRO parent,
-                     RecyclerView recyclerView,
-                     Context context) {
+    AssociateAssessmentAdapter(List<AssessmentRO> items,
+                               CourseRO parent,
+                               RecyclerView recyclerView,
+                               Context context) {
         this.items = items;
         this.parent = parent;
         this.context = context;
@@ -40,19 +42,19 @@ public class AssociateAdapter extends RecyclerView.Adapter<AssociateAdapter.View
 
     @NonNull
     @Override
-    public AssociateAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
-                                                          int viewType) {
+    public AssociateAssessmentAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
+                                                                    int viewType) {
         return new ViewHolder(LayoutInflater.
                 from(parent.getContext())
                 .inflate(R.layout.associated_item, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AssociateAdapter.ViewHolder holder, int position) {
-        CourseRO current = items.get(position);
+    public void onBindViewHolder(@NonNull AssociateAssessmentAdapter.ViewHolder holder, int position) {
+        AssessmentRO current = items.get(position);
         holder.associatedTitleTextView.setText(current.getTitle());
 
-        if (current.getTermId() == parent.getId()) {
+        if (current.getCourseId() == parent.getId()) {
             associateView(holder);
         } else {
             disassociateView(holder);
@@ -60,14 +62,14 @@ public class AssociateAdapter extends RecyclerView.Adapter<AssociateAdapter.View
 
     }
 
-    private void initSwipe(final AssociateAdapter adapter,
+    private void initSwipe(final AssociateAssessmentAdapter adapter,
                            final RecyclerView recyclerView) {
 
         ItemTouchHelper.SimpleCallback itemTouchCallback =
                 new ItemTouchHelper.SimpleCallback(0,
                         ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
-                    CourseDAO courseDAO = new CourseDAO(context);
+                    AssessmentDAO assessmentDAO = new AssessmentDAO(context);
 
                     @Override
                     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
@@ -77,13 +79,13 @@ public class AssociateAdapter extends RecyclerView.Adapter<AssociateAdapter.View
                         if (direction == ItemTouchHelper.RIGHT ||
                                 direction == ItemTouchHelper.LEFT) {
 
-                            CourseRO course = getItems().get(position);
+                            AssessmentRO assessment = getItems().get(position);
 
-                            if (course.getTermId() == parent.getId()) {
-                                courseDAO.disassociate(course);
+                            if (assessment.getCourseId() == parent.getId()) {
+                                assessmentDAO.disassociate(assessment);
                             } else {
-                                course.setTermId(parent.getId());
-                                courseDAO.update(course);
+                                assessment.setCourseId(parent.getId());
+                                assessmentDAO.update(assessment);
                             }
 
                             resetAdapter();
@@ -95,7 +97,7 @@ public class AssociateAdapter extends RecyclerView.Adapter<AssociateAdapter.View
                     private void resetAdapter() {
                         try {
                             adapter.getItems().clear();
-                            adapter.setItems(courseDAO.getAll());
+                            adapter.setItems(assessmentDAO.getAll());
                             adapter.notifyDataSetChanged();
                         } catch (ParseException e) {
                             e.printStackTrace();
@@ -158,7 +160,7 @@ public class AssociateAdapter extends RecyclerView.Adapter<AssociateAdapter.View
 //                RectF icon_dest = new RectF((float) itemView.getLeft() + width, (
 //                        float) itemView.getTop() + width, (float) itemView.getLeft() + 2 * width, (
 //                        float) itemView.getBottom() - width);
-//                c.drawBitmap(icon, null, icon_dest, p);
+//                c.drawBitmap(icon, null, icon_dest, p); TODO: fix this if you have time
             } else {
                 p.setColor(Color.parseColor("#ff4081"));
                 RectF background = new RectF((float) itemView.getRight() + dX, (
@@ -187,18 +189,18 @@ public class AssociateAdapter extends RecyclerView.Adapter<AssociateAdapter.View
         holder.associatedTitleTextView.
                 setTextColor(holder.associatedTitleTextView
                         .getResources()
-                        .getColor(R.color.textSecondary, null));
+                        .getColor(R.color.textAdded, null));
         holder.associatedStatusTextView.
                 setTextColor(holder.associatedStatusTextView
                         .getResources()
-                        .getColor(R.color.textSecondary, null));
+                        .getColor(R.color.textAdded, null));
     }
 
-    private List<CourseRO> getItems() {
+    private List<AssessmentRO> getItems() {
         return items;
     }
 
-    private void setItems(List<CourseRO> items) {
+    private void setItems(List<AssessmentRO> items) {
         this.items = items;
     }
 

@@ -25,19 +25,19 @@ import java.util.Objects;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link DetailFragment.OnFragmentInteractionListener} interface
+ * {@link TermDetailFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link DetailFragment#newInstance} factory method to
+ * Use the {@link TermDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DetailFragment extends Fragment {
+public class TermDetailFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ID = "term_id";
     private OnFragmentInteractionListener mListener;
     private TermRO term;
     private TermDAO dao;
 
-    public DetailFragment() {
+    public TermDetailFragment() {
         // Required empty public constructor
     }
 
@@ -45,10 +45,10 @@ public class DetailFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment DetailFragment.
+     * @return A new instance of fragment TermDetailFragment.
      */
-    public static DetailFragment newInstance(int id) {
-        DetailFragment fragment = new DetailFragment();
+    public static TermDetailFragment newInstance(int id) {
+        TermDetailFragment fragment = new TermDetailFragment();
         Bundle args = new Bundle();
         args.putInt(ID, id);
         fragment.setArguments(args);
@@ -63,7 +63,7 @@ public class DetailFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = Objects.requireNonNull(inflater).inflate(R.layout.fragment_detail,
+        View root = Objects.requireNonNull(inflater).inflate(R.layout.fragment_term_detail,
                 container,
                 false);
 
@@ -123,7 +123,7 @@ public class DetailFragment extends Fragment {
             mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnCourseInteractionListener");
         }
     }
 

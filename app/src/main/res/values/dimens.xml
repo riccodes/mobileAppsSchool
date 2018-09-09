@@ -13,4 +13,5 @@
          https://developer.android.com/design/patterns/navigation-drawer.html -->
     <dimen name="navigation_drawer_width">240dp</dimen>
     <dimen name="course_title">18sp</dimen>
+    <dimen name="standard_text_size">18sp</dimen>
 </resources>

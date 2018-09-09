@@ -28,7 +28,7 @@ public class AssessmentDAO extends BaseDAO {
             ASSESSMENT_TABLE_COURSE_ID
     };
 
-    AssessmentDAO(Context context) {
+    public AssessmentDAO(Context context) {
         super(context);
     }
 
@@ -37,6 +37,22 @@ public class AssessmentDAO extends BaseDAO {
 
         ContentValues cv = new ContentValues();
 
+        cv.put(ASSESSMENT_TABLE_TITLE, assessment.getTitle());
+        cv.put(ASSESSMENT_TABLE_GOAL, DateUtils.convertTimestampToString(assessment.getGoalDate()));
+        cv.put(ASSESSMENT_TABLE_GOAL, DateUtils.convertTimestampToString(assessment.getGoalDate()));
+        cv.put(ASSESSMENT_TABLE_TYPE, assessment.getType().toString());
+
+        db.insert(ASSESSMENT_TABLE_NAME, null, cv);
+
+        close();
+    }
+
+    public void addWithId(AssessmentRO assessment) {
+        open();
+
+        ContentValues cv = new ContentValues();
+
+        cv.put(ASSESSMENT_TABLE_COURSE_ID, assessment.getId());
         cv.put(ASSESSMENT_TABLE_TITLE, assessment.getTitle());
         cv.put(ASSESSMENT_TABLE_GOAL, DateUtils.convertTimestampToString(assessment.getGoalDate()));
         cv.put(ASSESSMENT_TABLE_TYPE, assessment.getType().toString());
@@ -139,6 +155,29 @@ public class AssessmentDAO extends BaseDAO {
         close();
     }
 
+    public void disassociate(AssessmentRO assessment) {
+        open();
+
+        delete(assessment.getId());
+        addWithId(copyAssessment(assessment));
+
+        close();
+    }
+
+    private AssessmentRO copyAssessment(AssessmentRO assessment) {
+        AssessmentRO a = new AssessmentRO();
+
+        a.setId(assessment.getId());
+        a.setTitle(assessment.getTitle());
+        a.setStart(assessment.getStart());
+        a.setEnd(assessment.getEnd());
+        a.setType(assessment.getType());
+        a.setGoalDate(assessment.getGoalDate());
+
+
+        return a;
+    }
+
     public void update(AssessmentRO assessment) {
         open();
 
@@ -153,5 +192,23 @@ public class AssessmentDAO extends BaseDAO {
         db.update(ASSESSMENT_TABLE_NAME, cv, whereClause, null);
 
         close();
+    }
+
+    public int getLastId() {
+        open();
+
+        int id = 0;
+        Cursor c;
+
+        c = db.query(ASSESSMENT_TABLE_NAME, ALL_ASSESSMENT_COLUMNS, null, null, null, null, null);
+        if (c.getCount() > 0) {
+            c.moveToLast();
+            id = c.getInt(0);
+        }
+
+        c.close();
+        close();
+
+        return id;
     }
 }

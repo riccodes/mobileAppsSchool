@@ -14,20 +14,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="5dp">
+            android:padding="10dp">
 
             <TextView
                 android:id="@+id/titleSpan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/title" />
+                android:text="@string/title"
+                android:textSize="@dimen/standard_text_size" />
 
             <EditText
                 android:id="@+id/titleEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/enter_title"
-                android:inputType="text" />
+                android:inputType="text"
+                android:textSize="@dimen/standard_text_size" />
 
         </LinearLayout>
 
@@ -37,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_below="@+id/titleLayout"
-            android:padding="5dp">
+            android:padding="10dp">
 
             <TextView
                 android:id="@+id/startSpan"
@@ -45,7 +47,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:text="@string/start_date" />
+                android:text="@string/start_date"
+                android:textSize="@dimen/standard_text_size" />
 
             <TextView
                 android:id="@+id/startDate"
@@ -57,20 +60,21 @@
                 android:text="@string/select_a_date" />
 
             <TextView
-                android:id="@+id/endDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:text="@string/select_a_date" />
-
-            <TextView
                 android:id="@+id/endSpan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toStartOf="@+id/endDate"
                 android:paddingEnd="3dp"
                 android:paddingStart="3dp"
-                android:text="@string/end_date" />
+                android:text="@string/end_date"
+                android:textSize="@dimen/standard_text_size" />
+
+            <TextView
+                android:id="@+id/endDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="@string/select_a_date" />
 
         </RelativeLayout>
 
@@ -91,7 +95,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:background="@color/white"
-                android:text="@string/cancel" />
+                android:text="@string/cancel"
+                android:textColor="@color/textPrimary" />
 
             <Button
                 android:id="@+id/saveButton"
@@ -100,7 +105,8 @@
                 android:layout_toEndOf="@+id/cancelButton"
                 android:background="@color/colorAccent"
                 android:text="@string/save"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textStyle="bold" />
 
         </RelativeLayout>
 

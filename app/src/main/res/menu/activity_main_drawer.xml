@@ -12,7 +12,7 @@
     <!--android:icon="@drawable/ic_menu_camera"-->
     <!--android:title="Terms" />-->
     <!--<item-->
-    <!--android:id="@+id/courses"-->
+    <!--android:id="@+id/assessments"-->
     <!--android:icon="@drawable/ic_menu_gallery"-->
     <!--android:title="Courses" />-->
     <!--<item-->

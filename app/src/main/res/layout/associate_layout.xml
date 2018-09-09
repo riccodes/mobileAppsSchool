@@ -9,17 +9,18 @@
     android:padding="5dp">
 
     <TextView
+        android:id="@+id/associateTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingEnd="3dp"
-        android:paddingStart="3dp"
-        android:text="@string/swipe_to_add_or_remove_courses" />
+        android:padding="8dp"
+        android:text="@string/swipe_to_add_or_remove_courses"
+        android:textSize="16sp" />
 
     <android.support.v7.widget.RecyclerView
 
         android:id="@+id/associateNewCoursesRecycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:showIn="@layout/fragment_grid" />
+        tools:showIn="@layout/course_fragment_grid" />
 
 </LinearLayout>
