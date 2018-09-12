@@ -29,7 +29,6 @@ import java.util.Objects;
  * create an instance of this fragment.
  */
 public class AssessmentDetailFragment extends Fragment {
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ID = "assessment_id";
     private OnAssessmentInteractionListener mListener;
     private AssessmentRO assessment;
@@ -68,11 +67,13 @@ public class AssessmentDetailFragment extends Fragment {
         assert this.getArguments() != null;
         int id = this.getArguments().getInt(ID);
 
-        TextView termTitleTextView = root.findViewById(R.id.termTitleTextView);
-        TextView goalTextView = root.findViewById(R.id.goal);
+        TextView termTitleTextView = root.findViewById(R.id.courseTitleTextView);
+        TextView goalTextView = root.findViewById(R.id.goalTextView);
         TextView typeTextView = root.findViewById(R.id.typeTextView);
 
-        final ImageView deleteImageView = root.findViewById(R.id.deleteTermImageView);
+        final ImageView deleteImageView = root.findViewById(R.id.deleteAssessmentImageView);
+        final ImageView editAssessmentImageView = root.findViewById(R.id.editAssessmentImageView);
+
         deleteImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -113,8 +114,15 @@ public class AssessmentDetailFragment extends Fragment {
             }
 
         } catch (ParseException e) {
-            e.printStackTrace(); //todo: handle this
+            e.printStackTrace();
         }
+
+        editAssessmentImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.editAssessment(assessment.getId());
+            }
+        });
 
         return root;
     }
@@ -148,5 +156,7 @@ public class AssessmentDetailFragment extends Fragment {
      */
     public interface OnAssessmentInteractionListener {
         void goToHomePage();
+
+        void editAssessment(int id);
     }
 }

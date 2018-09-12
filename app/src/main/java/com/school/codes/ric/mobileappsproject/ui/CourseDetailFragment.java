@@ -1,6 +1,8 @@
 package com.school.codes.ric.mobileappsproject.ui;
 
 import android.content.Context;
+import android.content.Intent;
+import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -17,7 +19,6 @@ import com.school.codes.ric.mobileappsproject.resource.CourseRO;
 import com.school.codes.ric.mobileappsproject.util.DateUtils;
 
 import java.text.ParseException;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -29,7 +30,6 @@ import java.util.Objects;
  * create an instance of this fragment.
  */
 public class CourseDetailFragment extends Fragment {
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ID = "course_id";
     private OnFragmentInteractionListener mListener;
     private CourseRO course;
@@ -68,9 +68,9 @@ public class CourseDetailFragment extends Fragment {
         assert this.getArguments() != null;
         int id = this.getArguments().getInt(ID);
 
-        TextView termTitleTextView = root.findViewById(R.id.termTitleTextView);
-        TextView termStartTextView = root.findViewById(R.id.termStartTextView);
-        TextView termEndTextView = root.findViewById(R.id.termEndTextView);
+        TextView termTitleTextView = root.findViewById(R.id.courseTitleTextView);
+        TextView termStartTextView = root.findViewById(R.id.courseStartTextView);
+        TextView termEndTextView = root.findViewById(R.id.courseEndTextView);
 
         TextView notesTextView = root.findViewById(R.id.notesTextView);
         TextView statusTextView = root.findViewById(R.id.statusTextView);
@@ -79,31 +79,47 @@ public class CourseDetailFragment extends Fragment {
         TextView alertStartTextView = root.findViewById(R.id.alertStartTextView);
 
         final ImageView deleteImageView = root.findViewById(R.id.deleteTermImageView);
+        final ImageView editTermImageView = root.findViewById(R.id.deleteAssessmentImageView);
+        final ImageView share = root.findViewById(R.id.share);
+
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, course.getNotes());
+                startActivity(Intent.createChooser(shareIntent, "Share link using"));
+            }
+        });
+
         deleteImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar deleteSnackBar = Snackbar.make(deleteImageView,
                         "Delete Course: " + course.getTitle() + "?",
                         Snackbar.LENGTH_LONG);
+
                 deleteSnackBar.setAction("OK", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        CourseDAO courseDAO = new CourseDAO(getContext());
 
                         try {
-                            List<CourseRO> courses =
-                                    courseDAO.getAllAssociated(course.getId());
-                            for (CourseRO c : courses) {
-                                courseDAO.disassociate(c);
-                            }
-                        } catch (ParseException e) {
-                            e.printStackTrace();
+                            dao.delete(course.getId());
+                            mListener.goToHomePage();
+                        } catch (SQLiteConstraintException e) {
+                            final Snackbar s = Snackbar.make(view,
+                                    "Please Remove ALL Assessments before deleting",
+                                    Snackbar.LENGTH_INDEFINITE);
+                            s.setAction("DISMISS", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    s.dismiss();
+                                }
+                            }).show();
                         }
 
-                        dao.delete(course.getId());
-
-                        mListener.goToHomePage();
                     }
+
                 }).show();
             }
         });
@@ -120,8 +136,15 @@ public class CourseDetailFragment extends Fragment {
             alertStartTextView.setText(DateUtils.convertTimestampToString(course.getStartAlert()));
             alertEndTextView.setText(DateUtils.convertTimestampToString(course.getEndAlert()));
         } catch (ParseException e) {
-            e.printStackTrace(); //todo: handle this
+            e.printStackTrace();
         }
+
+        editTermImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.editCourse(course.getId());
+            }
+        });
 
         return root;
     }
@@ -155,5 +178,7 @@ public class CourseDetailFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void goToHomePage();
+
+        void editCourse(int id);
     }
 }

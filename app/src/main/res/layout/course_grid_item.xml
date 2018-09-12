@@ -44,13 +44,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_below="@+id/goalTextView"
+            android:layout_below="@+id/typeTextView"
             android:layout_centerHorizontal="true"
             android:gravity="center"
             android:text="@string/end_date" />
 
         <TextView
-            android:id="@+id/goalTextView"
+            android:id="@+id/typeTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/goal"

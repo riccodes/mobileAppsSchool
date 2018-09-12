@@ -69,7 +69,7 @@ public class AllCoursesGridFragment extends Fragment
             CourseDAO courseDAO = new CourseDAO(getContext());
             courses = courseDAO.getAll();
         } catch (ParseException e) {
-            e.printStackTrace(); //todo: handle this properly
+            e.printStackTrace();
         }
 
         if (courses.size() > 0) {

@@ -19,11 +19,8 @@ import android.view.View;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.school.codes.ric.mobileappsproject.R;
-import com.school.codes.ric.mobileappsproject.data.CourseDAO;
 import com.school.codes.ric.mobileappsproject.data.TermDAO;
-import com.school.codes.ric.mobileappsproject.resource.CourseRO;
 import com.school.codes.ric.mobileappsproject.resource.TermRO;
-import com.school.codes.ric.mobileappsproject.util.DateUtils;
 
 import java.text.ParseException;
 import java.util.List;
@@ -76,9 +73,6 @@ public class MainActivity extends AppCompatActivity
         populateDrawerMenu();
 
 
-//        createTestCourses(); TODO: REMOVE
-
-
     }
 
     private void displayHome() {
@@ -90,44 +84,6 @@ public class MainActivity extends AppCompatActivity
                 .commit();
     }
 
-    //FIXME: REMOVE
-    private void createTestCourses() {
-        CourseDAO courseDAO = new CourseDAO(getApplicationContext());
-
-        try {
-            CourseRO course = new CourseRO("English",
-                    DateUtils.convertStringToTimestamp("12-jun-2018"),
-                    DateUtils.convertStringToTimestamp("12-oct-2018"),
-                    "COMPLETED",
-                    "A Mock Mentor (123)987-6543",
-                    "These are not real notes",
-                    DateUtils.convertStringToTimestamp("11-jun-2018"),
-                    DateUtils.convertStringToTimestamp("11-oct-2018"));
-            courseDAO.add(course);
-            CourseRO course2 = new CourseRO("Math",
-                    DateUtils.convertStringToTimestamp("12-jun-2018"),
-                    DateUtils.convertStringToTimestamp("12-oct-2018"),
-                    "COMPLETED",
-                    "A Mock Mentor (123)987-6543",
-                    "These are not real notes",
-                    DateUtils.convertStringToTimestamp("11-jun-2018"),
-                    DateUtils.convertStringToTimestamp("11-oct-2018"));
-            courseDAO.add(course2);
-            CourseRO course3 = new CourseRO("Science",
-                    DateUtils.convertStringToTimestamp("12-jun-2018"),
-                    DateUtils.convertStringToTimestamp("12-oct-2018"),
-                    "COMPLETED",
-                    "A Mock Mentor (123)987-6543",
-                    "These are not real notes",
-                    DateUtils.convertStringToTimestamp("11-jun-2018"),
-                    DateUtils.convertStringToTimestamp("11-oct-2018"));
-            courseDAO.add(course3);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-    }
-
     private void populateDrawerMenu() {
 
         List<TermRO> terms = null;
@@ -135,7 +91,7 @@ public class MainActivity extends AppCompatActivity
             TermDAO termDAO = new TermDAO(getApplicationContext());
             terms = termDAO.getAll();
         } catch (ParseException e) {
-            e.printStackTrace(); //todo: handle this properly
+            e.printStackTrace();
         }
 
         navMenu.clear();
@@ -171,14 +127,12 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 clearAllFragments();
-                AddTermFragment addFrag = AddTermFragment.newInstance();
-                manager.beginTransaction()
-                        .replace(R.id.mainLayout, addFrag).commit();
+                addTerm(0);
                 fabMenu.collapse();
             }
         });
 
-        FloatingActionButton addCourse = new FloatingActionButton(this);
+        final FloatingActionButton addCourse = new FloatingActionButton(this);
         addCourse.setTitle(getString(R.string.add_course));
         addCourse.setSize(FloatingActionButton.SIZE_MINI);
         addCourse.setColorNormal(ContextCompat.getColor(getApplicationContext(),
@@ -192,9 +146,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 clearAllFragments();
-                AddCourseFragment addFrag = AddCourseFragment.newInstance();
-                manager.beginTransaction()
-                        .replace(R.id.mainLayout, addFrag).commit();
+                addCourse(0);
                 fabMenu.collapse();
             }
         });
@@ -213,9 +165,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 clearAllFragments();
-                AddAssessmentFragment addFrag = AddAssessmentFragment.newInstance();
-                manager.beginTransaction()
-                        .replace(R.id.mainLayout, addFrag).commit();
+                addAssessment(0);
                 fabMenu.collapse();
             }
         });
@@ -223,6 +173,31 @@ public class MainActivity extends AppCompatActivity
         fabMenu.addButton(addTerm);
         fabMenu.addButton(addCourse);
         fabMenu.addButton(addAssessment);
+    }
+
+    private void addAssessment(int id) {
+        clearAllFragments();
+        AddAssessmentFragment addFrag = AddAssessmentFragment.newInstance(id);
+        manager.beginTransaction()
+                .replace(R.id.mainLayout, addFrag).commit();
+    }
+
+    private void addTerm(int id) {
+        clearAllFragments();
+        AddTermFragment addFrag = AddTermFragment.newInstance(id);
+        manager.beginTransaction()
+                .replace(R.id.mainLayout, addFrag)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void addCourse(int id) {
+        clearAllFragments();
+        AddCourseFragment addFrag = AddCourseFragment.newInstance(id);
+        manager.beginTransaction()
+                .replace(R.id.mainLayout, addFrag)
+                .addToBackStack(null)
+                .commit();
     }
 
     private void clearAllFragments() {
@@ -375,5 +350,20 @@ public class MainActivity extends AppCompatActivity
     public void goToHomePage() {
         displayHome();
         populateDrawerMenu();
+    }
+
+    @Override
+    public void editAssessment(int id) {
+        addAssessment(id);
+    }
+
+    @Override
+    public void editCourse(int id) {
+        addCourse(id);
+    }
+
+    @Override
+    public void editTerm(int id) {
+        addTerm(id);
     }
 }

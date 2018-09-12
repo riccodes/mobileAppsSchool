@@ -3,7 +3,6 @@ package com.school.codes.ric.mobileappsproject.data;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.school.codes.ric.mobileappsproject.resource.CourseRO;
 import com.school.codes.ric.mobileappsproject.util.DateUtils;
@@ -26,6 +25,7 @@ import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE
 
 public class CourseDAO extends BaseDAO {
     public static final String TAG = CourseDAO.class.getSimpleName();
+    private static final int ID_OFFSET = 100;
 
     private final String[] ALL_COURSE_COLUMNS = {
             COURSE_TABLE_ID,
@@ -61,8 +61,6 @@ public class CourseDAO extends BaseDAO {
                 DateUtils.convertTimestampToString(course.getEndAlert()));
 
         db.insert(COURSE_TABLE_NAME, null, cv);
-        Log.d(TAG, "add():" + course);
-        Log.d(TAG, "add id:" + getLastId());
 
         close();
     }
@@ -148,7 +146,7 @@ public class CourseDAO extends BaseDAO {
 
         c.close();
         close();
-        Log.d(TAG, "getAll():" + courses.size());
+
         return courses;
     }
 
@@ -180,8 +178,6 @@ public class CourseDAO extends BaseDAO {
         }
 
         db.update(COURSE_TABLE_NAME, cv, whereClause, null);
-        Log.d(TAG, "update():" + course);
-        Log.d(TAG, "update id:" + course.getId());
         close();
     }
 

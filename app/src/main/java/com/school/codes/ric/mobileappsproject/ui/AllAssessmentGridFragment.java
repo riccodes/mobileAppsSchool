@@ -70,7 +70,7 @@ public class AllAssessmentGridFragment extends Fragment
             AssessmentDAO assessmentDAO = new AssessmentDAO(getContext());
             assessments = assessmentDAO.getAll();
         } catch (ParseException e) {
-            e.printStackTrace(); //todo: handle this properly
+            e.printStackTrace();
         }
 
         if (assessments.size() > 0) {

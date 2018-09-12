@@ -38,6 +38,9 @@ import java.util.Objects;
  * create an instance of this fragment.
  */
 public class AddTermFragment extends Fragment {
+
+    private static final String ID = "ID";
+
     private OnFragmentInteractionListener mListener;
     private CourseDAO courseDAO;
     private TermRO term;
@@ -47,6 +50,7 @@ public class AddTermFragment extends Fragment {
 
     private Timestamp start;
     private Timestamp end;
+    private boolean isNewTerm;
 
     public AddTermFragment() {
         // Required empty public constructor
@@ -58,9 +62,10 @@ public class AddTermFragment extends Fragment {
      *
      * @return A new instance of fragment AddTermFragment.
      */
-    public static AddTermFragment newInstance() {
+    public static AddTermFragment newInstance(int id) {
         AddTermFragment fragment = new AddTermFragment();
         Bundle args = new Bundle();
+        args.putInt(ID, id);
         fragment.setArguments(args);
         return fragment;
     }
@@ -77,9 +82,9 @@ public class AddTermFragment extends Fragment {
         courseDAO = new CourseDAO(getContext());
         final TermDAO termDAO = new TermDAO(getContext());
         View v = inflater.inflate(R.layout.fragment_add_term, container, false);
-
         final EditText titleEditText = v.findViewById(R.id.titleEditText);
         startDate = v.findViewById(R.id.startDate);
+
         startDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -124,19 +129,21 @@ public class AddTermFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                List<CourseRO> tempCourses = null;
-                try {
-                    tempCourses = courseDAO.getAllAssociated(term.getId());
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                if (isNewTerm) {
+                    List<CourseRO> tempCourses = null;
+                    try {
+                        tempCourses = courseDAO.getAllAssociated(term.getId());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
 
-                assert tempCourses != null;
-                for (CourseRO c : tempCourses) {
-                    courseDAO.disassociate(c);
-                }
+                    assert tempCourses != null;
+                    for (CourseRO c : tempCourses) {
+                        courseDAO.disassociate(c);
+                    }
 
-                termDAO.delete(termDAO.getLastId());
+                    termDAO.delete(termDAO.getLastId());
+                }
 
                 goToHomePage();
             }
@@ -174,29 +181,48 @@ public class AddTermFragment extends Fragment {
         });
 
         try {
-            term = new TermRO("",
-                    DateUtils.convertStringToTimestamp("01-Jan-1990"),
-                    DateUtils.convertStringToTimestamp("01-Jan-1990"));
-            termDAO.add(term);
-            term = termDAO.get(termDAO.getLastId());
 
-            RecyclerView associateNewCoursesRecycler =
-                    v.findViewById(R.id.associateNewCoursesRecycler);
-            RecyclerView.LayoutManager manager = new LinearLayoutManager(getContext());
-            AssociateCourseAdapter adapter = new AssociateCourseAdapter(courseDAO.getAll(),
-                    term,
-                    associateNewCoursesRecycler,
-                    getContext());
+            assert getArguments() != null;
+            if (getArguments().getInt(ID) == 0) {
+                isNewTerm = true;
 
-            associateNewCoursesRecycler.setLayoutManager(manager);
-            associateNewCoursesRecycler.setAdapter(adapter);
+                term = new TermRO("",
+                        DateUtils.convertStringToTimestamp("01-Jan-1990"),
+                        DateUtils.convertStringToTimestamp("01-Jan-1990"));
+                termDAO.add(term);
+                term = termDAO.get(termDAO.getLastId());
+            } else {
+                isNewTerm = false;
+
+                term = termDAO.get(getArguments().getInt(ID));
+                titleEditText.setText(term.getTitle());
+                end = term.getEnd();
+                endDate.setText(DateUtils.convertTimestampToString(end));
+                start = term.getStart();
+                startDate.setText(DateUtils.convertTimestampToString(start));
+            }
+
+
+            setUpRecycler(v);
 
         } catch (ParseException e) {
-            e.printStackTrace(); //todo: handle this
             return null;
         }
 
         return v;
+    }
+
+    private void setUpRecycler(View v) throws ParseException {
+        RecyclerView associateNewCoursesRecycler =
+                v.findViewById(R.id.associateNewCoursesRecycler);
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(getContext());
+        AssociateCourseAdapter adapter = new AssociateCourseAdapter(courseDAO.getAll(),
+                term,
+                associateNewCoursesRecycler,
+                getContext());
+
+        associateNewCoursesRecycler.setLayoutManager(manager);
+        associateNewCoursesRecycler.setAdapter(adapter);
     }
 
     public void onTermSave(int id) {

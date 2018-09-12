@@ -16,7 +16,7 @@
         android:padding="10dp">
 
         <TextView
-            android:id="@+id/termTitleTextView"
+            android:id="@+id/courseTitleTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
@@ -33,7 +33,7 @@
             android:id="@+id/goal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/termTitleTextView"
+            android:layout_below="@+id/courseTitleTextView"
             android:text="Goal:"
             android:textSize="18sp" />
 
@@ -41,20 +41,29 @@
             android:id="@+id/goalTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/termTitleTextView"
+            android:layout_below="@+id/courseTitleTextView"
             android:layout_toEndOf="@+id/goal"
+            android:paddingStart="3dp"
             android:textSize="18sp" />
 
         <ImageView
-            android:id="@+id/deleteTermImageView"
+            android:id="@+id/editAssessmentImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/deleteAssessmentImageView"
+            android:contentDescription="@string/delete_term_desc"
+            android:padding="5dp"
+            android:src="@drawable/ic_edit_black_24dp" />
+
+        <ImageView
+            android:id="@+id/deleteAssessmentImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             android:contentDescription="@string/delete_term_desc"
-            android:paddingTop="3dp"
-            android:src="@android:drawable/ic_menu_delete"
-            android:tint="@android:color/holo_red_light" />
+            android:padding="5dp"
+            android:src="@drawable/ic_delete_forever_black_24dp" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -62,32 +71,21 @@
             android:layout_below="@+id/goal">
 
             <TextView
-                android:id="@+id/type"
+                android:id="@+id/typeSpan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Type:" />
+                android:layout_marginTop="5dp"
+                android:text="Type:"
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/typeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_toEndOf="@+id/type" />
-
-            <TextView
-                android:id="@+id/status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/type"
-                android:text="Status:" />
-
-            <TextView
-                android:id="@+id/statusTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/type"
-                android:layout_toEndOf="@+id/status"
-                android:text="INACTIVE" />
+                android:layout_marginTop="5dp"
+                android:layout_toEndOf="@+id/typeSpan"
+                android:paddingStart="3dp"
+                android:textSize="18sp" />
 
 
         </RelativeLayout>

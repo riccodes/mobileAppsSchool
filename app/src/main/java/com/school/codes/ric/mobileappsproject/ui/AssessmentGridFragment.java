@@ -80,7 +80,7 @@ public class AssessmentGridFragment extends Fragment
             assessmentDAO = new AssessmentDAO(getContext());
             assessments = assessmentDAO.getAllAssessmentsForCourse(mId);
         } catch (ParseException e) {
-            e.printStackTrace(); //todo: handle this properly
+            e.printStackTrace();
         }
 
         gridAdapter = new AssessmentGridAdapter(assessments, this);

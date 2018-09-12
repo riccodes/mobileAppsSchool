@@ -1,10 +1,14 @@
 package com.school.codes.ric.mobileappsproject.ui;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,11 +26,17 @@ import com.school.codes.ric.mobileappsproject.resource.AssessmentRO;
 import com.school.codes.ric.mobileappsproject.util.DateUtils;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
+
+import static android.content.Context.ALARM_SERVICE;
+import static com.school.codes.ric.mobileappsproject.util.Constants.NOTIFICATION;
+import static com.school.codes.ric.mobileappsproject.util.Constants.NOTIFICATION_ID;
+import static com.school.codes.ric.mobileappsproject.util.Constants.NOTIFICATION_TITLE_GOAL;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,10 +49,13 @@ import java.util.Objects;
 public class AddAssessmentFragment extends Fragment {
 
     private static final String TAG = AddAssessmentFragment.class.getSimpleName();
+    private static final String ID = "ID";
     private OnAssessmentInteractionListener mListener;
     private AssessmentDAO assessmentDAO;
+    private AssessmentRO assessment;
 
     private Timestamp goal;
+    private Spinner typeSpinner;
 
     public AddAssessmentFragment() {
         // Required empty public constructor
@@ -54,8 +67,12 @@ public class AddAssessmentFragment extends Fragment {
      *
      * @return A new instance of fragment AddTermFragment.
      */
-    public static AddAssessmentFragment newInstance() {
-        return new AddAssessmentFragment();
+    public static AddAssessmentFragment newInstance(int id) {
+        AddAssessmentFragment fragment = new AddAssessmentFragment();
+        Bundle args = new Bundle();
+        args.putInt(ID, id);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -72,7 +89,7 @@ public class AddAssessmentFragment extends Fragment {
 
         final EditText titleEditText = v.findViewById(R.id.titleEditText);
         final TextView goalDate = v.findViewById(R.id.goalDate);
-        final Spinner typeSpinner = v.findViewById(R.id.typeSpinner);
+        typeSpinner = v.findViewById(R.id.typeSpinner);
 
         List<String> statuses = new ArrayList<>();
         statuses.addAll(Arrays.asList(AssessmentRO.AssessmentType.OBJECTIVE.toString(),
@@ -121,13 +138,18 @@ public class AddAssessmentFragment extends Fragment {
                     Toast.makeText(getContext(), "Goal date cannot be null", Toast.LENGTH_SHORT)
                             .show();
                 } else {
-                    AssessmentRO assessment = new AssessmentRO();
+                    assessment = new AssessmentRO();
                     assessment.setTitle(titleEditText.getText().toString());
                     assessment.setGoalDate(goal);
                     assessment.setType(AssessmentRO.AssessmentType.valueOf(typeSpinner.getSelectedItem().toString()));
                     assessment.setGoalDate(goal);
 
                     assessmentDAO.add(assessment);
+
+                    scheduleNotification(NOTIFICATION_TITLE_GOAL,
+                            assessment.getTitle(),
+                            assessment.getId(),
+                            assessment.getGoalDate());
 
                     onCourseSave(assessmentDAO.getLastId());
 
@@ -138,7 +160,73 @@ public class AddAssessmentFragment extends Fragment {
             }
         });
 
+        if (getArguments().getInt(ID) > 0) {
+            try {
+                assessment = assessmentDAO.get(getArguments().getInt(ID));
+                titleEditText.setText(assessment.getTitle());
+                goal = assessment.getGoalDate();
+                goalDate.setText(DateUtils.convertTimestampToString(assessment.getGoalDate()));
+
+                setSpinner(typeSpinner);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
         return v;
+    }
+
+    private void scheduleNotification(String title, String content, int id, Timestamp alert) {
+
+
+        // Set up intent to open TaskListFragment
+        Intent mainActivityIntent = new Intent(getContext(), MainActivity.class);
+        PendingIntent mainActivityPendingIntent =
+                PendingIntent.getActivity(getContext(), id, mainActivityIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+
+        // build notification
+        NotificationCompat.Builder notification =
+                new NotificationCompat.Builder(getContext());
+        notification.setContentTitle(title);
+        notification.setContentText(content);
+        notification.setDefaults(NotificationCompat.DEFAULT_SOUND);
+        notification.setSmallIcon(R.drawable.notify);
+        notification.setAutoCancel(true);
+        notification.setNumber(1);
+        notification.setContentIntent(mainActivityPendingIntent);
+
+
+        // create intent to add task values for notification
+        Intent notificationIntent = new Intent(getContext(),
+                NotifPublisher.class);
+        notificationIntent.putExtra(NOTIFICATION_ID, id);
+        notificationIntent.putExtra(NOTIFICATION, notification.build());
+
+        // call alarm manager to schedule notification
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext()
+                , id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarmManager =
+                (AlarmManager) getContext().getSystemService(ALARM_SERVICE);
+        assert alarmManager != null;
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP,
+                alert.getTime(),
+                pendingIntent);
+
+    }
+
+    private void setSpinner(Spinner typeSpinner) {
+        String type = assessment.getType().name();
+        int index;
+        switch (type) {
+            case "PERFORMANCE":
+                index = 1;
+                break;
+            default:
+                index = 0;
+        }
+        typeSpinner.setSelection(index);
     }
 
     public void onCourseSave(int id) {

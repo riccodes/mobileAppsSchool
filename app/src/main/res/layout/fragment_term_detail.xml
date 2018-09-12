@@ -16,7 +16,7 @@
         android:padding="10dp">
 
         <TextView
-            android:id="@+id/termTitleTextView"
+            android:id="@+id/courseTitleTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
@@ -30,28 +30,38 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/termStartTextView"
+            android:id="@+id/courseStartTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/termTitleTextView"
+            android:layout_below="@+id/courseTitleTextView"
             android:textSize="18sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/termTitleTextView"
+            android:layout_below="@+id/courseTitleTextView"
             android:layout_centerHorizontal="true"
             android:text="@string/dash"
             android:textSize="22sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/termEndTextView"
+            android:id="@+id/courseEndTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_below="@+id/termTitleTextView"
+            android:layout_below="@+id/courseTitleTextView"
             android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/deleteAssessmentImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/courseTitleTextView"
+            android:layout_toStartOf="@+id/deleteTermImageView"
+            android:contentDescription="@string/delete_term_desc"
+            android:padding="5dp"
+            android:src="@drawable/ic_edit_black_24dp" />
 
         <ImageView
             android:id="@+id/deleteTermImageView"
@@ -60,9 +70,8 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             android:contentDescription="@string/delete_term_desc"
-            android:paddingTop="3dp"
-            android:src="@android:drawable/ic_menu_delete"
-            android:tint="@android:color/holo_red_light" />
+            android:padding="5dp"
+            android:src="@drawable/ic_delete_forever_black_24dp" />
 
     </RelativeLayout>
 

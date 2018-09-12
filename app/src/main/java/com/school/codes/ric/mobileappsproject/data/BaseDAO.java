@@ -6,10 +6,14 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class BaseDAO {
 
+    private static final String TAG = BaseDAO.class.getSimpleName();
+
     SQLiteDatabase db;
     private DBHelper helper;
+    private Context mContext;
 
     BaseDAO(Context context) {
+        this.mContext = context;
         helper = new DBHelper(context);
     }
 
@@ -26,5 +30,4 @@ public class BaseDAO {
         db.execSQL("delete from " + table);
         close();
     }
-
 }

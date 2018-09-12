@@ -79,7 +79,7 @@ public class CourseGridFragment extends Fragment implements CourseGridAdapter.On
             courseDAO = new CourseDAO(getContext());
             courses = courseDAO.getAllAssociated(mId);
         } catch (ParseException e) {
-            e.printStackTrace(); //todo: handle this properly
+            e.printStackTrace();
         }
 
         gridAdapter = new CourseGridAdapter(courses, this);

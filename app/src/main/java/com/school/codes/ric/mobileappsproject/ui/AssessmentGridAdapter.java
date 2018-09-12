@@ -63,7 +63,7 @@ public class AssessmentGridAdapter extends RecyclerView.Adapter {
             super(itemView);
 
             titleTextView = itemView.findViewById(R.id.titleTextView);
-            goalTextView = itemView.findViewById(R.id.goalTextView);
+            goalTextView = itemView.findViewById(R.id.typeTextView);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
