@@ -156,11 +156,6 @@ public class AssociateAssessmentAdapter extends RecyclerView.Adapter<AssociateAs
                 Paint p2 = new Paint();
                 p2.setColor(Color.parseColor("#ffffff"));
                 c.drawText("+", 0, 0, p2);
-//                icon = BitmapFactory.decodeResource(getResources(), R.drawable.check_small);
-//                RectF icon_dest = new RectF((float) itemView.getLeft() + width, (
-//                        float) itemView.getTop() + width, (float) itemView.getLeft() + 2 * width, (
-//                        float) itemView.getBottom() - width);
-//                c.drawBitmap(icon, null, icon_dest, p); TODO: fix this if you have time
             } else {
                 p.setColor(Color.parseColor("#ff4081"));
                 RectF background = new RectF((float) itemView.getRight() + dX, (

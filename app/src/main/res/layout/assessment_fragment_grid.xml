@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/white"
     tools:context=".ui.CourseGridFragment">
 
     <RelativeLayout
@@ -31,9 +32,9 @@
                 android:id="@+id/addCourses"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@color/colorAccent"
                 android:paddingEnd="15dp"
                 android:paddingStart="15dp"
-                android:background="@color/colorAccent"
                 android:text="@string/add_assoc"
                 android:textColor="@color/white"
                 android:textSize="15sp"
