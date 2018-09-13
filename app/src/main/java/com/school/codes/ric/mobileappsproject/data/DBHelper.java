@@ -30,7 +30,7 @@ import static com.school.codes.ric.mobileappsproject.util.Constants.TERM_TABLE_T
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME ="project_db";
-    private static final int VERSION = 1;
+    private static final int VERSION = 2;
 
     private static final String DROP ="DROP TABLE IF EXISTS ";
     private static final String CREATE_TERM_TABLE = "create table " +
@@ -88,8 +88,7 @@ public class DBHelper extends SQLiteOpenHelper {
             " REFERENCES " + COURSE_TABLE_NAME + "(" + COURSE_TABLE_ID + ")" +
             ")";
 
-
-    public DBHelper(Context context) {
+    DBHelper(Context context) {
         super(context, DB_NAME, null, VERSION);
     }
 
@@ -107,5 +106,13 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(DROP + TERM_TABLE_NAME);
 
         onCreate(db);
+    }
+
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        if (!db.isReadOnly()) {
+            db.execSQL("PRAGMA foreign_keys=ON");
+        }
     }
 }

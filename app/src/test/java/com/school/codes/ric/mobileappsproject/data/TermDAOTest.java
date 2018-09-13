@@ -1,6 +1,9 @@
 package com.school.codes.ric.mobileappsproject.data;
 
+import android.database.sqlite.SQLiteException;
+
 import com.school.codes.ric.mobileappsproject.BuildConfig;
+import com.school.codes.ric.mobileappsproject.resource.CourseRO;
 import com.school.codes.ric.mobileappsproject.resource.TermRO;
 import com.school.codes.ric.mobileappsproject.util.DateUtils;
 
@@ -17,15 +20,16 @@ import java.text.ParseException;
 import java.util.List;
 
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
+import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE_NAME;
 import static com.school.codes.ric.mobileappsproject.util.Constants.TERM_TABLE_NAME;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = LOLLIPOP, packageName = "com.school.codes.ric.mobileappsproject")
 public class TermDAOTest {
 
     private TermDAO termDAO;
+    private TermRO term;
     private String title;
     private Timestamp start;
     private Timestamp end;
@@ -38,7 +42,8 @@ public class TermDAOTest {
         start = DateUtils.convertStringToTimestamp("01-jul-2018");
         end = DateUtils.convertStringToTimestamp("01-dec-2018");
 
-        termDAO.add(new TermRO(title, start, end));
+        term = new TermRO(title, start, end);
+        termDAO.add(term);
     }
 
     @After
@@ -121,7 +126,31 @@ public class TermDAOTest {
     }
 
     @Test
-    public void testTermShouldNotBeDeletedIfCourseAssociated() {
-        fail("Not implemented"); //todo: make this work
+    public void testTermShouldNotBeDeletedIfCourseAssociated() throws ParseException {
+        CourseRO course = new CourseRO("test course",
+                DateUtils.convertStringToTimestamp("01-jul-2018"),
+                DateUtils.convertStringToTimestamp("01-dec-2018"),
+                "IN PROGRESS",
+                "My mentor (123) 123-4567 123 fake st",
+                "some test notes",
+                DateUtils.convertStringToTimestamp("30-jun-2018"),
+                DateUtils.convertStringToTimestamp("30-nov-2018"));
+        CourseDAO courseDAO = new CourseDAO(RuntimeEnvironment.application);
+        courseDAO.clearDB(COURSE_TABLE_NAME);
+        courseDAO.add(course);
+
+        course = courseDAO.get(1);
+        course.setTermId(1);
+        courseDAO.update(course);
+
+        try {
+            termDAO.delete(1);
+        } catch (SQLiteException e) {
+            assertEquals(" class was wrong",
+                    "class android.database.sqlite.SQLiteException",
+                    e.getClass().toString());
+        }
+
+        courseDAO.delete(1);
     }
 }

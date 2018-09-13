@@ -19,6 +19,7 @@ import java.util.List;
 
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
 import static com.school.codes.ric.mobileappsproject.util.Constants.ASSESSMENT_TABLE_NAME;
+import static com.school.codes.ric.mobileappsproject.util.Constants.COURSE_TABLE_NAME;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(RobolectricGradleTestRunner.class)
@@ -45,6 +46,7 @@ public class AssessmentDAOTest {
     @After
     public void after(){
         assessmentDAO.clearDB(ASSESSMENT_TABLE_NAME);
+        assessmentDAO.clearDB(COURSE_TABLE_NAME);
     }
 
     @Test
@@ -97,14 +99,17 @@ public class AssessmentDAOTest {
 
     @Test
     public void testUpdateAssessment() throws ParseException {
+        addCourse();
 
         AssessmentRO assessment = assessmentDAO.get(1);
         assertEquals("Title was different", title, assessment.getTitle());
 
-        AssessmentRO assessmentUpdate = new AssessmentRO("updated title",
+        AssessmentRO assessmentUpdate = new AssessmentRO(
+                "updated title",
                 AssessmentRO.AssessmentType.OBJECTIVE,
                 DateUtils.convertStringToTimestamp("31-jul-2018"));
         assessmentUpdate.setId(1);
+        assessmentUpdate.setCourseId(1);
         assessmentDAO.update(assessmentUpdate);
 
         assessment = assessmentDAO.get(1);
@@ -122,34 +127,40 @@ public class AssessmentDAOTest {
     @Test
     public void testGetAllAssociatedAssessments() throws ParseException {
 
-        AssessmentRO a3 = new AssessmentRO("a3", AssessmentRO.AssessmentType.PERFORMANCE,
-                DateUtils.convertStringToTimestamp("10-oct-2016"));
-        assessmentDAO.add(a3);
-        a3.setCourseId(101);
-        assessmentDAO.update(a3);
+        addCourse();
 
         AssessmentRO a2 = new AssessmentRO("a2", AssessmentRO.AssessmentType.PERFORMANCE,
                 DateUtils.convertStringToTimestamp("10-oct-2016"));
         assessmentDAO.add(a2);
 
-        CourseRO course = new CourseRO();
-        course.setId(100);
-
         AssessmentRO a1 = assessmentDAO.get(1);
-        a1.setCourseId(course.getId());
+        a1.setCourseId(1);
         assessmentDAO.update(a1);
 
         a2 = assessmentDAO.get(2);
-        a2.setCourseId(course.getId());
+        a2.setCourseId(1);
         assessmentDAO.update(a2);
 
         List<AssessmentRO> assessments =
-                assessmentDAO.getAllAssessmentsForCourse(course.getId());
+                assessmentDAO.getAllAssessmentsForCourse(1);
         assertEquals("size was incorrect", 2, assessments.size());
         assertEquals("title was incorrect for item one", a1.getTitle(),
                 assessments.get(0).getTitle());
         assertEquals("title was incorrect for item two", a2.getTitle(),
                 assessments.get(1).getTitle());
 
+    }
+
+    private void addCourse() throws ParseException {
+        CourseRO course = new CourseRO("test",
+                DateUtils.convertStringToTimestamp("01-jul-2018"),
+                DateUtils.convertStringToTimestamp("01-jul-2018"),
+                "IN PROGRESS",
+                "My mentor (123) 123-4567 123 fake st",
+                "some test notes",
+                DateUtils.convertStringToTimestamp("01-jul-2018"),
+                DateUtils.convertStringToTimestamp("01-jul-2018"));
+        CourseDAO courseDAO = new CourseDAO(RuntimeEnvironment.application);
+        courseDAO.add(course);
     }
 }
