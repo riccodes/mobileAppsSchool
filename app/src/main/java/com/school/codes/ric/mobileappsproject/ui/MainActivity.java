@@ -62,11 +62,13 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         manager = getSupportFragmentManager();
-
         fabItUp();
+        setupDrawer(toolbar);
+        populateDrawerMenu();
 
-        displayHome();
+    }
 
+    private void setupDrawer(Toolbar toolbar) {
         drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -77,9 +79,6 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         navMenu = navigationView.getMenu();
-
-        populateDrawerMenu();
-
     }
 
     private void displayHome() {
@@ -367,23 +366,30 @@ public class MainActivity extends AppCompatActivity
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        drawer.openDrawer(Gravity.START);
-        fabMenu.expand();
-
         Handler h = new Handler();
         h.postDelayed(new Runnable() {
             @Override
             public void run() {
-                drawer.closeDrawer(Gravity.START);
+                drawer.openDrawer(Gravity.START);
+                fabMenu.expand();
 
                 Handler h2 = new Handler();
                 h2.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        drawer.closeDrawer(Gravity.START);
                         fabMenu.collapse();
                     }
-                }, 1000);
+                }, 500);
 
+            }
+        }, 1000);
+
+        Handler h2 = new Handler();
+        h2.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                displayHome();
             }
         }, 2000);
     }
