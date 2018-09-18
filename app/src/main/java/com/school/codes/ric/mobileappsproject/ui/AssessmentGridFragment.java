@@ -73,7 +73,7 @@ public class AssessmentGridFragment extends Fragment
 
         associateLayout = root.findViewById(R.id.associateLayout);
         associateLayout.setVisibility(View.INVISIBLE);
-        TextView addCourses = root.findViewById(R.id.addCourses);
+        final TextView addCourses = root.findViewById(R.id.addCourses);
         List<AssessmentRO> assessments = new ArrayList<>();
 
         try {
@@ -112,6 +112,7 @@ public class AssessmentGridFragment extends Fragment
             @Override
             public void onClick(View view) {
                 if (associating) {
+                    addCourses.setText("+");
                     try {
                         associatedCoursesRecycler.setVisibility(View.VISIBLE);
                         associateLayout.setVisibility(View.INVISIBLE);
@@ -125,6 +126,7 @@ public class AssessmentGridFragment extends Fragment
                         e.printStackTrace();
                     }
                 } else {
+                    addCourses.setText("-");
                     associatedCoursesRecycler.setVisibility(View.INVISIBLE);
                     associateLayout.setVisibility(View.VISIBLE);
                     associating = true;

@@ -218,8 +218,11 @@ public class CourseDAO extends BaseDAO {
     public void disassociate(CourseRO course) {
         open();
 
-        delete(course.getId());
-        addWithId(copyCourse(course));
+        String whereClause = "_id=" + course.getId();
+        ContentValues cv = new ContentValues();
+
+        cv.put(COURSE_TABLE_TERM_ID, (String) null);
+        db.update(COURSE_TABLE_NAME, cv, whereClause, null);
 
         close();
     }
