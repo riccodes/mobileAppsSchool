@@ -158,8 +158,11 @@ public class AssessmentDAO extends BaseDAO {
     public void disassociate(AssessmentRO assessment) {
         open();
 
-        delete(assessment.getId());
-        addWithId(copyAssessment(assessment));
+        String whereClause = "_id=" + assessment.getId();
+        ContentValues cv = new ContentValues();
+
+        cv.put(ASSESSMENT_TABLE_COURSE_ID, (String) null);
+        db.update(ASSESSMENT_TABLE_NAME, cv, whereClause, null);
 
         close();
     }

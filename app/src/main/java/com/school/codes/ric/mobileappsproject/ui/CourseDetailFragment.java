@@ -156,7 +156,7 @@ public class CourseDetailFragment extends Fragment {
             mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnCourseInteractionListener");
+                    + " must implement OnFragmentInteractionListener");
         }
     }
 
@@ -178,7 +178,6 @@ public class CourseDetailFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void goToHomePage();
-
         void editCourse(int id);
     }
 }

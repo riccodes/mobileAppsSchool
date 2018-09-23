@@ -26,6 +26,7 @@ public class AssociateCourseAdapter extends RecyclerView.Adapter<AssociateCourse
     private List<CourseRO> items;
     private TermRO parent;
     private Context context;
+    private TextView associatedTitleTextView;
 
     AssociateCourseAdapter(List<CourseRO> items,
                            TermRO parent,
@@ -50,7 +51,8 @@ public class AssociateCourseAdapter extends RecyclerView.Adapter<AssociateCourse
     @Override
     public void onBindViewHolder(@NonNull AssociateCourseAdapter.ViewHolder holder, int position) {
         CourseRO current = items.get(position);
-        holder.associatedTitleTextView.setText(current.getTitle());
+        associatedTitleTextView = holder.associatedTitleTextView;
+        associatedTitleTextView.setText(current.getTitle());
 
         if (current.getTermId() == parent.getId()) {
             associateView(holder);

@@ -2,16 +2,20 @@ package com.school.codes.ric.mobileappsproject.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,13 +54,16 @@ public class MainActivity extends AppCompatActivity
         AssessmentDetailFragment.OnAssessmentInteractionListener,
         AllAssessmentGridFragment.OnAssessmentInteractionListener {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
+
     private static final String COURSES_INTENT = "COURSES_INTENT";
     private static final String ASSESSMENTS_INTENT = "ASSESSMENTS_INTENT";
-    private static final String TAG = MainActivity.class.getSimpleName();
 
     private FragmentManager manager;
     private NavigationView navigationView;
     private Menu navMenu;
+    private DrawerLayout drawer;
+    private FloatingActionsMenu fabMenu;
     private TermDAO termDAO;
 
     //todo: dynamic button on associate
@@ -70,14 +77,15 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         manager = getSupportFragmentManager();
-
         loadTestData();
-
         fabItUp();
+        setupDrawer(toolbar);
+        populateDrawerMenu();
 
-        displayHome();
+    }
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+    private void setupDrawer(Toolbar toolbar) {
+        drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -87,24 +95,19 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         navMenu = navigationView.getMenu();
-
-        populateDrawerMenu();
-
     }
 
     private void displayHome() {
         clearAllFragments();
         HomeFragment home = HomeFragment.newInstance();
-        manager.beginTransaction()
-                .replace(R.id.detailFrameLayout, home)
-                .addToBackStack(null)
-                .commit();
+        replaceFragments(home, null);
     }
 
     private void populateDrawerMenu() {
 
         List<TermRO> terms = null;
         try {
+            TermDAO termDAO = new TermDAO(getApplicationContext());
             terms = termDAO.getAll();
         } catch (ParseException e) {
             e.printStackTrace();
@@ -127,7 +130,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void fabItUp() {
-        final FloatingActionsMenu fabMenu = findViewById(R.id.fab_menu);
+        fabMenu = findViewById(R.id.fab_menu);
 
         final FloatingActionButton addTerm = new FloatingActionButton(this);
         addTerm.setTitle(getString(R.string.add_term));
@@ -191,35 +194,44 @@ public class MainActivity extends AppCompatActivity
         fabMenu.addButton(addAssessment);
     }
 
+    private void clearAllFragments() {
+        for (Fragment f : manager.getFragments()) {
+            manager.beginTransaction().remove(f).commit();
+        }
+    }
+
+    private void replaceFragments(Fragment f1, Fragment f2) {
+
+        FragmentTransaction transaction = manager.beginTransaction();
+
+        if (f1 != null) {
+            transaction.replace(R.id.detailFrameLayout, f1);
+        }
+
+        if (f2 != null) {
+            transaction.replace(R.id.contentFrameLayout, f2);
+        }
+
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .commit();
+    }
+
     private void addAssessment(int id) {
         clearAllFragments();
         AddAssessmentFragment addFrag = AddAssessmentFragment.newInstance(id);
-        manager.beginTransaction()
-                .replace(R.id.mainLayout, addFrag).commit();
+        replaceFragments(addFrag, null);
     }
 
     private void addTerm(int id) {
         clearAllFragments();
         AddTermFragment addFrag = AddTermFragment.newInstance(id);
-        manager.beginTransaction()
-                .replace(R.id.mainLayout, addFrag)
-                .addToBackStack(null)
-                .commit();
+        replaceFragments(addFrag, null);
     }
 
     private void addCourse(int id) {
         clearAllFragments();
         AddCourseFragment addFrag = AddCourseFragment.newInstance(id);
-        manager.beginTransaction()
-                .replace(R.id.mainLayout, addFrag)
-                .addToBackStack(null)
-                .commit();
-    }
-
-    private void clearAllFragments() {
-        for (Fragment f : manager.getFragments()) {
-            manager.beginTransaction().remove(f).commit();
-        }
+        replaceFragments(addFrag, null);
     }
 
     private void displayTermView(int id) {
@@ -228,11 +240,7 @@ public class MainActivity extends AppCompatActivity
         CourseGridFragment frag = CourseGridFragment.newInstance(id);
         TermDetailFragment detailFrag = TermDetailFragment.newInstance(id);
 
-        manager.beginTransaction()
-                .replace(R.id.detailFrameLayout, detailFrag)
-                .replace(R.id.contentFrameLayout, frag)
-                .addToBackStack(null)
-                .commit();
+        replaceFragments(detailFrag, frag);
     }
 
     private void displayCourseView(int id) {
@@ -241,11 +249,7 @@ public class MainActivity extends AppCompatActivity
         AssessmentGridFragment frag = AssessmentGridFragment.newInstance(id);
         CourseDetailFragment detailFrag = CourseDetailFragment.newInstance(id);
 
-        manager.beginTransaction()
-                .replace(R.id.detailFrameLayout, detailFrag)
-                .replace(R.id.contentFrameLayout, frag)
-                .addToBackStack(null)
-                .commit();
+        replaceFragments(detailFrag, frag);
     }
 
     private void displayAllAssessments() {
@@ -253,10 +257,7 @@ public class MainActivity extends AppCompatActivity
 
         AllAssessmentGridFragment frag = AllAssessmentGridFragment.newInstance();
 
-        manager.beginTransaction()
-                .replace(R.id.contentFrameLayout, frag)
-                .addToBackStack(null)
-                .commit();
+        replaceFragments(frag, null);
     }
 
     private void displayAllCourses() {
@@ -264,21 +265,15 @@ public class MainActivity extends AppCompatActivity
 
         AllCoursesGridFragment frag = AllCoursesGridFragment.newInstance();
 
-        manager.beginTransaction()
-                .replace(R.id.contentFrameLayout, frag)
-                .addToBackStack(null)
-                .commit();
+        replaceFragments(frag, null);
     }
 
     private void displayAssessmentView(int id) {
         clearAllFragments();
 
-        AssessmentDetailFragment detailFrag = AssessmentDetailFragment.newInstance(id);
+        AssessmentDetailFragment frag = AssessmentDetailFragment.newInstance(id);
 
-        manager.beginTransaction()
-                .replace(R.id.detailFrameLayout, detailFrag)
-                .addToBackStack(null)
-                .commit();
+        replaceFragments(frag, null);
     }
 
     private void loadTestData() {
@@ -549,4 +544,35 @@ public class MainActivity extends AppCompatActivity
         addTerm(id);
     }
 
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+        Handler h = new Handler();
+        h.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                drawer.openDrawer(Gravity.START);
+                fabMenu.expand();
+
+                Handler h2 = new Handler();
+                h2.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        drawer.closeDrawer(Gravity.START);
+                        fabMenu.collapse();
+                    }
+                }, 500);
+
+            }
+        }, 1000);
+
+        Handler h2 = new Handler();
+        h2.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                displayHome();
+            }
+        }, 2000);
+    }
 }
