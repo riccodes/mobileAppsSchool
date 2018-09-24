@@ -17,7 +17,7 @@
     <string name="added">ADDED</string>
     <string name="associated_courses">Associated Courses</string>
     <string name="associated_assessments">Associated Assessments</string>
-    <string name="add_assoc">+</string>
+    <string name="add_assoc">ADD</string>
     <string name="welcome_banner_text">WELCOME TO COURSE MANAGER</string>
     <string name="logo">logo</string>
     <string name="title">Title:</string>

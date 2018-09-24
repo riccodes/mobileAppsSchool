@@ -112,7 +112,7 @@ public class AssessmentGridFragment extends Fragment
             @Override
             public void onClick(View view) {
                 if (associating) {
-                    addCourses.setText("+");
+                    addCourses.setText("ADD");
                     try {
                         associatedCoursesRecycler.setVisibility(View.VISIBLE);
                         associateLayout.setVisibility(View.INVISIBLE);
@@ -126,7 +126,7 @@ public class AssessmentGridFragment extends Fragment
                         e.printStackTrace();
                     }
                 } else {
-                    addCourses.setText("-");
+                    addCourses.setText("DONE");
                     associatedCoursesRecycler.setVisibility(View.INVISIBLE);
                     associateLayout.setVisibility(View.VISIBLE);
                     associating = true;

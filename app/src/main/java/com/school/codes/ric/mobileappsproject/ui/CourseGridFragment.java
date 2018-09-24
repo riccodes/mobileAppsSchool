@@ -72,7 +72,7 @@ public class CourseGridFragment extends Fragment implements CourseGridAdapter.On
 
         associateLayout = root.findViewById(R.id.associateLayout);
         associateLayout.setVisibility(View.INVISIBLE);
-        TextView addCourses = root.findViewById(R.id.addCourses);
+        final TextView addCourses = root.findViewById(R.id.addCourses);
         List<CourseRO> courses = new ArrayList<>();
 
         try {
@@ -121,6 +121,7 @@ public class CourseGridFragment extends Fragment implements CourseGridAdapter.On
                         gridAdapter.notifyDataSetChanged();
 
                         associating = false;
+                        addCourses.setText("ADD");
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -128,6 +129,7 @@ public class CourseGridFragment extends Fragment implements CourseGridAdapter.On
                     associatedCoursesRecycler.setVisibility(View.INVISIBLE);
                     associateLayout.setVisibility(View.VISIBLE);
                     associating = true;
+                    addCourses.setText("DONE");
                 }
             }
         });

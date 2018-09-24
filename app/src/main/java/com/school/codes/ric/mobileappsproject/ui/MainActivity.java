@@ -64,9 +64,7 @@ public class MainActivity extends AppCompatActivity
     private Menu navMenu;
     private DrawerLayout drawer;
     private FloatingActionsMenu fabMenu;
-    private TermDAO termDAO;
 
-    //todo: dynamic button on associate
     //todo: handle back
 
     @Override
@@ -381,7 +379,7 @@ public class MainActivity extends AppCompatActivity
         TermRO fall = new TermRO("Fall Term", fallStartDate, fallEndDate);
 
         // Add data to DB
-        termDAO = new TermDAO(getApplicationContext());
+        TermDAO termDAO = new TermDAO(getApplicationContext());
         termDAO.clearDB(ASSESSMENT_TABLE_NAME);
         termDAO.clearDB(COURSE_TABLE_NAME);
         termDAO.clearDB(TERM_TABLE_NAME);
